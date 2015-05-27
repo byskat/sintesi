@@ -234,7 +234,7 @@
 			var connCenterName = document.getElementById('center').value;		
 
 			//Definint variables per l'ajax
-			var url = "addOrUpdateConnextions.php?&formId=" + clickedId + "&connName=" + connName + "&connEndDate=" + connEndDate + "&connCenterName=" + connCenterName + "&userNameCenterId=" + userNameCenterId + "&action=" + action;
+			var url = "./includes/php/connectionsAjax.php?&formId=" + clickedId + "&connName=" + connName + "&connEndDate=" + connEndDate + "&connCenterName=" + connCenterName + "&userNameCenterId=" + userNameCenterId + "&action=" + action;
 			var myQuery = getXMLHTTPRequest();					 		
 
 			$('.blackScreen').hide();
