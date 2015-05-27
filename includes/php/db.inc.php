@@ -1,0 +1,13 @@
+<?php
+    try {
+        $opc = array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8");
+        $dsn = "mysql:host=localhost;dbname=creditSintesi";
+        $conn = new PDO($dsn, "secureuser", "test++", $opc);
+        $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+    }
+    catch (PDOException $e) {
+        $error = $e->getCode();
+        $missatge = $e->getMessage();
+        die("Hi ha hagut un error ". $missatge);
+    }
+?>
