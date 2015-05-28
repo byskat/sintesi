@@ -115,6 +115,92 @@ input:invalid {
 	transition: bottom 0.3s ease-in-out;
 }
 
+<<<<<<< HEAD
+=======
+#register{
+	width: auto;
+	right: -50%;
+	float: right;
+}
+
+.outerCenter{
+	float: right;
+  right: 50%;
+  position: relative;
+}
+
+.second{
+	position: relative;
+	margin-left: -350px;
+	z-index: -30;
+	transition: all 0.3s ease-in-out;
+}
+
+.half{
+	float:left !important;
+	width: 50% !important;
+}
+
+.roleButtons{
+	margin: 10px;
+}
+
+.loginLink{
+	margin: 10px;
+}
+
+
+.addCenterCamp{
+	width: 80% !important;
+}
+
+.addCenterButton{
+	float: right;
+	text-align: center;
+	font-size: 1.4em;
+	display: block;
+	width: 20%;
+	cursor: pointer;
+}
+
+.addCenterButton a i{
+	line-height: 49px;
+}
+
+label {
+    display: inline-block;
+    cursor: pointer;
+    position: relative;
+    padding-left: 25px;
+    margin-right: 15px;
+    font-size: 13px;
+}
+input[type=radio] {
+    display: none;
+}
+label:before {
+		border-radius: 100%;
+    content: "";
+    display: inline-block;
+ 
+    width: 16px;
+    height: 16px;
+ 
+    margin-right: 10px;
+    position: absolute;
+    left: 0;
+    bottom: 1px;
+    background-color: rgb(192,192,192);
+    box-shadow: inset 0px 2px 3px 0px rgba(0, 0, 0, .2), 0px 1px 0px 0px rgba(255, 255, 255, .5);
+}
+input[type=radio]:checked + label:before {
+    content: "\2022";
+    color: #f3f3f3;
+    font-size: 30px;
+    text-align: center;
+    line-height: 18px;
+}
+>>>>>>> oscar
 /* ---Generic classes--- */
 .shadowBox{
 	border: 1px solid rgba(0,0,0,.2);
@@ -161,7 +247,24 @@ input:invalid {
 	}
 }
 
+<<<<<<< HEAD
 
+=======
+@media screen and (max-width: 700px){
+	#register.container{
+		border-radius: 0 !important;
+		width: 100%;
+	}
+
+	.outerCenter{
+		width: 100%;
+	}
+
+	#register.container .subcontainer{
+		width: 100%;
+	}
+}
+>>>>>>> oscar
 
 nav.nav{
 	position: fixed;

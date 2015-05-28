@@ -1,7 +1,11 @@
 <?php
 	require('../includes/php/db.inc.php');
 	require('./includes/php/userValidation.inc.php');
+<<<<<<< HEAD
 	require('./includes/php/functions.php');
+=======
+	require('./includes/php/functions.inc.php');
+>>>>>>> oscar
 
 ?>
 <!DOCTYPE html>
