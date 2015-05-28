@@ -175,123 +175,6 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-<<<<<<< HEAD
-        <title>Registre</title>        
-
-        <link rel="stylesheet" type="text/css" href="./includes/css/normalize.css">
-        <link rel="stylesheet" type="text/css" href="./includes/css/jquery-ui-1.11.4/jquery-ui.css">
-        <link rel="stylesheet" type="text/css" href="./includes/css/style.css" />
-        <link rel="stylesheet" type="text/css" href="./includes/datetimepicker/jquery.datetimepicker.css"/>
-
-        <script src="./includes/js/jquery-2.1.4/jquery-2.1.4.js"></script>
-        <script src="./includes/js/jquery-ui-1.11.4/jquery-ui.js"></script>
-        <script src="./includes/datetimepicker/jquery.datetimepicker.js"></script>
-
-        
-    </head>
-        <body>
-
-        <style>
-
-            .selectFile{
-                display: none;
-            }
-
-
-        </style>
-    <div class="imgBg">
-      <div class="wrapper">
-      </div>
-    </div>
-    <div class="paddingTop"></div>
-    <div class="container">
-        <div class="subcontainer">
-            <h1>Registre</h1>
-            <form action="" method="POST">
-                <p>
-                   <input id="name" class="text" type="text" name="name" required placeholder="nom" />
-                </p>
-                <p>
-                   <input id="lastName" class="text" type="text" name="lastName" required placeholder="cognoms" />
-                </p>
-
-                <p>
-                   <input id="datetimepicker" class="text" type="text" name="birthDay" required placeholder="data de naixement" />
-                </p>
-                
-                <p>
-                   <input id="password" class="text" type="email" name="email" required placeholder="email" />
-                </p>
-
-                <p>
-                   <input id="username" class="text" type="text" name="username" required placeholder="nom d'usuari" />
-                </p>
-
-                <p>
-                   <input id="startYear" class="text" type="text" name="startYear" required placeholder="any d'inici" />
-                </p>
-
-                <p>
-                   <input id="endYear" class="text" type="text" name="endYear" required placeholder="any de fi" />
-                </p>
-             
-                <p>
-                   <input id="password" class="text" type="password" name="password" required placeholder="contrasenya" />
-                </p>
-                <p>
-                   <input id="password1" class="text" type="password" name="password1" required placeholder="Repetir contrasenya" />
-                </p>
-
-                <p>
-                   <input id="orderNumber" class="text" type="text" name="orderNumber" placeholder="nombre d'ordre (nomes professors)" />
-                </p>
-
-                <p>
-                   <input id="nameCenter" class="text" type="text" name="nameCenter" placeholder="nom del nou centre" />
-                </p>
-
-                <p>
-                   <input id="cityCenter" class="text" type="text" name="cityCenter" placeholder="ciutat del nou centre" />
-                </p>
-
-                <p>
-                   <input id="zipCenter" class="text" type="text" name="zipCenter" placeholder="codi postal nou centre" />
-                </p>
-
-                <p>
-                   <input id="adressCenter" class="text" type="text" name="addressCenter" placeholder="adressa del nou centre" />
-                </p>
-
-                <!--<p class="center">
-                    <input type="button" class="btnFoto" name="btnFoto" value="sel·lcciona la foto" onclick="getFile()">
-                    <input type="file" id="profileImg" name="profileImg" class="selectFile">
-                </p>-->
-
-
-                
-                <p>                   
-                    <select class="text" name="centers" id="centers">;
-                        <?php echo $options ?>
-                    </select>                   
-                </p>
-
-                <p class="center">
-                    <input class="redButton" type="submit" name="submit" value="Registre" /><br />
-                    <a class="link" href="login.php">Login</a>
-                </p>
-
-                
-            </form>
-        </div>
-
-        <script>
-
-            jQuery('#datetimepicker').datetimepicker({
-                timepicker:false,
-                format:'d/m/Y',
-                lang:'ca'
-            });
-=======
         <title>Registre</title>  
         <?php require('./includes/php/header.inc.php'); ?>
     </head>
@@ -397,7 +280,6 @@
             <div style="clear:both"></div>
 
             <div class="paddingTop"></div>
->>>>>>> oscar
 
             <script src="./includes/js/register.js"> </script>
 

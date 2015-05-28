@@ -11,10 +11,10 @@ html{
 body{
 	color: #5e5e5e;
 	font: 400 87.5%/1.5em 'Open Sans', sans-serif;
-  	background-color: #2C313A;
-  	position: relative;
-  	height: 100%;
-  	overflow-x: hidden; 
+	background-color: #2C313A;
+	position: relative;
+	height: 100%;
+	overflow-x: hidden; 
 }
 a {
 	color: inherit;
@@ -36,7 +36,7 @@ input:invalid {
 .imgBg{
 	background: url("https://download.unsplash.com/photo-1413896235942-39c2eb7cd584") 50% fixed;
   	background-size: cover;
-  	position: absolute;
+  	position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -81,6 +81,8 @@ input:invalid {
 	border-color: rgb(152, 152, 152);
 }
 .subcontainer{
+	float:left;
+	width: 350px;
 	padding: 10px 30px;
 	border: 1px solid rgba(0,0,0,0);
 }
@@ -115,8 +117,6 @@ input:invalid {
 	transition: bottom 0.3s ease-in-out;
 }
 
-<<<<<<< HEAD
-=======
 #register{
 	width: auto;
 	right: -50%;
@@ -200,7 +200,6 @@ input[type=radio]:checked + label:before {
     text-align: center;
     line-height: 18px;
 }
->>>>>>> oscar
 /* ---Generic classes--- */
 .shadowBox{
 	border: 1px solid rgba(0,0,0,.2);
@@ -247,9 +246,6 @@ input[type=radio]:checked + label:before {
 	}
 }
 
-<<<<<<< HEAD
-
-=======
 @media screen and (max-width: 700px){
 	#register.container{
 		border-radius: 0 !important;
@@ -264,7 +260,6 @@ input[type=radio]:checked + label:before {
 		width: 100%;
 	}
 }
->>>>>>> oscar
 
 nav.nav{
 	position: fixed;
@@ -412,6 +407,7 @@ div.login{
 }
 
 div.login p{
+	width: auto;
 	float: right;
 	line-height: 40px;
 }
@@ -569,9 +565,7 @@ div.formBox{
 }
 
 div.formBox span.tag, div.formBox input.tag, div.formBox select.tag{
-	background: rgb(250,250,250);
 	border: none;
-	
 	color: rgb(102,102,102);
 	font-family: 'Open Sans', sans-serif;
 	font-size: 1em;
