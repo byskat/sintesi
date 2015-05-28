@@ -22,18 +22,47 @@
 		$query = $conn->query($sql);
 		$count = $query->rowCount();
 
-		if($count == 1){
+		if($count == 0){
+			$result = false;
+		}else if($count == 1){
 			$result = $query->fetch(PDO::FETCH_OBJ);
 		}else{
 			$result = $query->fetchAll(PDO::FETCH_OBJ);
 		}
-
+		
 		return $result;
+	}
+
+	//Aquesta funcio mira si donada una consulta, aquesta torna algun resultat
+	function executePreparedQuery($conn, $sql, $arr){		
+
+            $query = $conn->prepare($sql);                  
+            $query->execute($arr);
+            $count = $query->rowCount();
+
+            if($count == 0){
+				$result = false;
+			}else if($count == 1){
+				$result = $query->fetch(PDO::FETCH_OBJ);
+			}else{
+				$result = $query->fetchAll(PDO::FETCH_OBJ);
+			}
+
+			return $result;        
+	}
+
+	function executeUpdateQuery($conn, $sql){
+		$conn->exec($sql);
+	}
+
+	function executeInsertQuery($conn, $sql, $arr){		            
+        $query = $conn->prepare($sql);                  
+        $query->execute($arr);
 	} 
 
 	function formatDate($formatIn, $formatOut, $date){
 		$date = DateTime::createFromFormat($formatIn, $date);    
         return $date->format($formatOut);
-	}
+	}	
 
 ?>

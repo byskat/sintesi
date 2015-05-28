@@ -1,7 +1,7 @@
 <?php
 	require('../includes/php/db.inc.php');
 	require('./includes/php/userValidation.inc.php');
-	require('./includes/php/functions.php');
+	require('./includes/php/functions.inc.php');
 
 ?>
 <!DOCTYPE html>
