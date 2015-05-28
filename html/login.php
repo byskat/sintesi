@@ -80,6 +80,9 @@
 					</p>
 				</form>	
 			</div>
+
+			<div style="clear:both"></div>
+
 			<div class="msgBox">
 				<p><?php if(isset($msg) & !empty($msg)){ echo $msg; ?> <script> $('.msgBox').addClass('activeMsg', 1000, "easeOutBounce"); </script> <?php } ?></p>
 			</div>

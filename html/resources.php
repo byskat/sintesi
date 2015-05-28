@@ -2,6 +2,7 @@
 	require('../includes/php/db.inc.php');
 	session_start();
 	if (isset($_SESSION['userID'])){
+		$userID = $_SESSION['userID'];
 		$user = $_SESSION['username'];
 	} else {
 		header('Location: login.php');
@@ -87,7 +88,7 @@
 
 				//Obtinc el rol i la id del centre l'usuari loguejat
 				
-				$sql = "SELECT id, role FROM users WHERE name ='" . $user . "'";
+				$sql = "SELECT id, role FROM users WHERE id ='" . $userID . "'";
 				$query = $conn->query($sql);
 				$result = $query->fetch(PDO::FETCH_OBJ);
 				$userNameId = $result->id;
@@ -129,7 +130,6 @@
 			    	<div class="item shadowBox">
 				    	
 				    	<form id="<?php echo $connId ?>" action="">
-
 				    		<input id="hiddenIdConn" type="hidden" name="hiddenIdConn" value="<?php echo $connId ?>" />
 							<input id="hiddenName" type="hidden" name="hiddenName" value="<?php echo $connName ?>" />							
 							<input id="hiddenCenter2" type="hidden" name="hiddenCentre2" value="<?php echo $center2 ?>" />

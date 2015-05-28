@@ -13,43 +13,23 @@
     foreach ($results as $result) {                                
         $options .= "<option value='" . $result->name . "'>". $result->name . "</option>";
     } 
+
     
-    //Llista de camps a comprovar. Aquest camps els comprova amb el codi de validation.inc.php
-    //s'accepten funcions com a parametres de validacio (utils per consultes)
-
-    $camps = [
-        'name' => [
-        ],
-        'lastName' => [
-        ],
-        'email' => [
-            'validation' => RGXP_EMAIL,            
-        ],
-        'birthDay' => [
-        ],
-        'pasword' => [            
-        ],
-        'pasword1' => [            
-        ],
-        'orderNumber' => [
-            'validation' => RGXP_ORDERNUMBER,
-            'opcional' => true
-        ],
-        'username' => [
-            'validation' => RGXP_USERNAME
-        ],
-    ];
-
-
-    if(empty(comprovarCamps($camps, 'post'))) {
-        $form = obtenirCamps($camps, 'post');
-        var_dump($form);
-    }
 
     if (!empty($_POST['name']) && !empty($_POST['lastName']) && !empty($_POST['birthDay']) && !empty($_POST['email']) && 
         !empty($_POST['username']) && !empty($_POST['password']) && !empty($_POST['password1']) && !empty($_POST['startYear']) && 
         !empty($_POST['endYear']) && $_POST['centers'] != "startOption"){
        
+        /* Array amb les dades del registre. Per poder recuperar les dades.
+        $updateValues = array(
+            "connId" => $formId,
+            "connName" => $connName,
+            "connCenters"  => $nameCenter1 . " & " . $connCenter2Name,
+            "endDate" => $connEndDate,
+            "nameCenter2" => $connCenter2Name
+        );
+        */
+
         function formatDate($dateString){
             $newDate = DateTime::createFromFormat('d/m/Y', $dateString);    
             return $newDate->format('Y-m-d');
@@ -248,6 +228,7 @@
         <link rel="stylesheet" type="text/css" href="./includes/css/normalize.css">
         <link rel="stylesheet" type="text/css" href="./includes/css/jquery-ui-1.11.4/jquery-ui.css">
         <link rel="stylesheet" type="text/css" href="./includes/css/style.css" />
+        <link rel="stylesheet" type="text/css" href="./includes/fonts/font-awesome/css/font-awesome.min.css">
         <link rel="stylesheet" type="text/css" href="./includes/datetimepicker/jquery.datetimepicker.css"/>
 
         <script src="./includes/js/jquery-2.1.4/jquery-2.1.4.js"></script>
@@ -256,126 +237,181 @@
 
         
     </head>
-        <body>
+    <body>
+        <div class="imgBg">
+          <div class="wrapper">
+          </div>
+        </div>
+        <div class="paddingTop"></div>
+        <div class="outerCenter">
+            <div id="register" class="container">
+                <h1>Registre</h1>
+                <div class="subcontainer first">
+                    
+                    <form action="" method="POST">
+                    <p>
+                       <input id="name" class="text" type="text" name="name" required placeholder="nom" value="<?php echo $_POST['name'] ?>" />
+                    </p>
+                    <p>
+                       <input id="lastName" class="text" type="text" name="lastName" required placeholder="cognoms" />
+                    </p>
 
-        <style>
+                    <p>
+                       <input id="datetimepicker" class="text" type="text" name="birthDay" required placeholder="data de naixement" />
+                    </p>
+                    
+                    <p>
+                       <input id="password" class="text" type="email" name="email" required placeholder="email" />
+                    </p>
 
-            .selectFile{
-                display: none;
-            }
+                    <p>
+                       <input id="username" class="text" type="text" name="username" required placeholder="nom d'usuari" />
+                    </p>
 
+                    <p>
+                       <input id="startYear" class="text half" type="text" name="startYear" required placeholder="any d'inici" />
+                    </p>
 
-        </style>
-    <div class="imgBg">
-      <div class="wrapper">
-      </div>
-    </div>
-    <div class="paddingTop"></div>
-    <div class="container">
-        <div class="subcontainer">
-            <h1>Registre</h1>
-            <form action="" method="POST">
-                <p>
-                   <input id="name" class="text" type="text" name="name" required placeholder="nom" />
-                </p>
-                <p>
-                   <input id="lastName" class="text" type="text" name="lastName" required placeholder="cognoms" />
-                </p>
+                    <p>
+                       <input id="endYear" class="text half" type="text" name="endYear" required placeholder="any de fi" />
+                    </p>
+                 
+                    <p>
+                       <input id="password" class="text" type="password" name="password" required placeholder="contrasenya" />
+                    </p>
+                    <p>
+                       <input id="password1" class="text" type="password" name="password1" required placeholder="Repetir contrasenya" />
+                    </p>
+                    <p class="center roleButtons">
+                        <input id="teacher" type="radio" name="role" value="teacher">
+                        <label for="teacher">Professor</label>
+                        <input id="student" type="radio" name="role" value="student">
+                        <label for="student">Alumne</label>
+                    </p>
+                </div>
+                <div class="subcontainer second">
+                        
+                    <p>                   
+                        <select class="text addCenterCamp" name="centers" id="centers">
+                            <?php echo $options ?>
+                        </select>                   
+                        <span class="addCenterButton">
+                            <a><i class="fa fa-plus"></i></a>
+                        </span>
+                    </p>
 
-                <p>
-                   <input id="datetimepicker" class="text" type="text" name="birthDay" required placeholder="data de naixement" />
-                </p>
+                    <p>
+                       <input id="orderNumber" class="text teacherInput" type="text" name="orderNumber" placeholder="nombre d'ordre (nomes professors)" />
+                    </p>
+
+                    <p>
+                       <input id="nameCenter" class="text teacherInput" type="text" name="nameCenter" placeholder="nom del nou centre" />
+                    </p>
+
+                    <p>
+                       <input id="cityCenter" class="text teacherInput" type="text" name="cityCenter" placeholder="ciutat del nou centre" />
+                    </p>
+
+                    <p>
+                       <input id="zipCenter" class="text teacherInput" type="text" name="zipCenter" placeholder="codi postal nou centre" />
+                    </p>
+
+                    <p>
+                       <input id="adressCenter" class="text teacherInput" type="text" name="addressCenter" placeholder="adressa del nou centre" />
+                    </p>
+
+                    <!--<p class="center">
+                        <input type="button" class="btnFoto" name="btnFoto" value="sel·lcciona la foto" onclick="getFile()">
+                        <input type="file" id="profileImg" name="profileImg" class="selectFile">
+                    </p>-->
+
+                    <p class="center">
+                        <input class="redButton" type="submit" name="submit" value="Registre" /><br />
+                    </p>
+                    </form>
+                </div>
                 
-                <p>
-                   <input id="password" class="text" type="email" name="email" required placeholder="email" />
-                </p>
+                <div style="clear:both"></div>
 
-                <p>
-                   <input id="username" class="text" type="text" name="username" required placeholder="nom d'usuari" />
-                </p>
-
-                <p>
-                   <input id="startYear" class="text" type="text" name="startYear" required placeholder="any d'inici" />
-                </p>
-
-                <p>
-                   <input id="endYear" class="text" type="text" name="endYear" required placeholder="any de fi" />
-                </p>
-             
-                <p>
-                   <input id="password" class="text" type="password" name="password" required placeholder="contrasenya" />
-                </p>
-                <p>
-                   <input id="password1" class="text" type="password" name="password1" required placeholder="Repetir contrasenya" />
-                </p>
-
-                <p>
-                   <input id="orderNumber" class="text" type="text" name="orderNumber" placeholder="nombre d'ordre (nomes professors)" />
-                </p>
-
-                <p>
-                   <input id="nameCenter" class="text" type="text" name="nameCenter" placeholder="nom del nou centre" />
-                </p>
-
-                <p>
-                   <input id="cityCenter" class="text" type="text" name="cityCenter" placeholder="ciutat del nou centre" />
-                </p>
-
-                <p>
-                   <input id="zipCenter" class="text" type="text" name="zipCenter" placeholder="codi postal nou centre" />
-                </p>
-
-                <p>
-                   <input id="adressCenter" class="text" type="text" name="addressCenter" placeholder="adressa del nou centre" />
-                </p>
-
-                <!--<p class="center">
-                    <input type="button" class="btnFoto" name="btnFoto" value="sel·lcciona la foto" onclick="getFile()">
-                    <input type="file" id="profileImg" name="profileImg" class="selectFile">
-                </p>-->
-
-
-                
-                <p>                   
-                    <select class="text" name="centers" id="centers">;
-                        <?php echo $options ?>
-                    </select>                   
-                </p>
-
-                <p class="center">
-                    <input class="redButton" type="submit" name="submit" value="Registre" /><br />
+                <p class="center loginLink">
                     <a class="link" href="login.php">Login</a>
                 </p>
 
-                
-            </form>
+            </div>
+            <div style="clear:both"></div>
+
+            <div class="paddingTop"></div>
+
+            <script>
+
+            var flagAddCenter=true;
+
+                $( document ).ready(function() {
+                    $(".teacherInput").hide();
+                    $("input[name='role']").click(function(){
+                        
+                        $(".teacherInput").hide();
+                        $(".addCenterButton").html("<a><i class='fa fa-plus'></i></a>");
+                        $(".addCenterCamp").prop('disabled', false);
+                        flagAddCenter=true;
+
+                        if($(this).val()=="teacher"){
+                            $(".addCenterButton").show();
+                            $(".text#centers").addClass("addCenterCamp");
+
+                        } else {
+                            $(".addCenterButton").hide();
+                            $(".text#centers").removeClass("addCenterCamp");
+                        }
+
+                        $(".second").css({
+                            "margin-left": "0",
+                            "z-index":"0"
+                        });
+                    });
+                    
+                    $(".addCenterButton").click(function(){
+                        if(flagAddCenter){
+                            $(".addCenterButton").html("<a><i class='fa fa-chevron-down'></i></a>");
+                            $(".addCenterCamp").val('startOption');
+                            $(".teacherInput").show();
+                            $(".addCenterCamp").prop('disabled', true);
+                            flagAddCenter=false;
+                        } else {
+                            $(".addCenterButton").html("<a><i class='fa fa-plus'></i></a>");
+                            $(".teacherInput").hide();
+                            $(".addCenterCamp").prop('disabled', false);
+                            flagAddCenter=true;
+                        }
+                        
+                    });
+
+                });
+
+                jQuery('#datetimepicker').datetimepicker({
+                    timepicker:false,
+                    format:'d/m/Y',
+                    lang:'ca'
+                });
+
+                /*function getFile(){
+                    document.getElementById("profileImg").click();
+                }*/
+
+            </script>
+
+            <div class="msgBox">
+                <p><?php if(isset($msg) & !empty($msg)){ 
+                    echo $msg; ?> 
+                    <script> 
+                        $('.msgBox').addClass('activeMsg', 1000, "easeOutBounce"); 
+                    <?php 
+                    if($msgColor==1){ ?> $('.msgBox').addClass('green'); $('.msgBox').removeClass('red'); <?php }
+                    if($msgColor==2){ ?> $('.msgBox').addClass('red'); $('.msgBox').removeClass('green'); <?php }
+                    ?> </script> <?php } ?>
+                </p>
+            </div>
+
         </div>
-
-        <script>
-
-            jQuery('#datetimepicker').datetimepicker({
-                timepicker:false,
-                format:'d/m/Y',
-                lang:'ca'
-            });
-
-            /*function getFile(){
-                document.getElementById("profileImg").click();
-            }*/
-
-        </script>
-
-        <div class="msgBox">
-            <p><?php if(isset($msg) & !empty($msg)){ 
-                echo $msg; ?> 
-                <script> 
-                    $('.msgBox').addClass('activeMsg', 1000, "easeOutBounce"); 
-                <?php 
-                if($msgColor==1){ ?> $('.msgBox').addClass('green'); $('.msgBox').removeClass('red'); <?php }
-                if($msgColor==2){ ?> $('.msgBox').addClass('red'); $('.msgBox').removeClass('green'); <?php }
-                ?> </script> <?php } ?>
-            </p>
-        </div>
-    </div>
     </body>
 </html>
