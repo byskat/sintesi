@@ -281,9 +281,7 @@
 
             <div class="paddingTop"></div>
 
-            <script src="./includes/js/register.js"> </script>
-
-               
+            <script src="./includes/js/register.js"> </script>              
 
         </div>
     </body>

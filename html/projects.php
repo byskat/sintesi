@@ -2,112 +2,91 @@
 	require('../includes/php/db.inc.php');
 	require('./includes/php/userValidation.inc.php');
 	require('./includes/php/functions.inc.php');
-
+	if(!isset($_POST["toProjectsIdConn"])){
+		header('Location: ./login.php');
+	}
 ?>
 <!DOCTYPE html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Panell</title>        
+    <title>Projectes</title>        
     <?php require('./includes/php/header.inc.php'); ?>
 </head>
 <body>
 
 	<?php
 		require('./includes/php/topBar.inc.php');
-		require('./includes/php/leftMenu.inc.php');
+		require('./includes/php/leftMenu.inc.php');		
 	?>	
 
 	<div class="panel">
 		<div class="itemList">			
 
-			<?php
+			<?php				
 
-				//Obtinc el rol i la id del centre l'usuari connectat
+				$idConnection = $_POST["toProjectsIdConn"];				
 				
-				$result = executeQuery($conn, "SELECT id, role FROM users WHERE id ='" . $userID . "'");
-				
-				$userNameId = $result->id;
-				$userRole = $result->role;
+				//Selecciono totes les ID de projecte les cuals la seva IDde projecte sigui la del que s'ha clicat
+				$results = executePreparedQuery($conn, "SELECT projects_id FROM connectionsProjects WHERE projects_id = :idConnection", array(':idConnection'=>$idConnection));
 
-				//A partir de la ID de l'usuari connectat trec la id del centre al que pertany
-				
-				$result = executeQuery($conn, "SELECT centers_id FROM inscriptions WHERE users_id ='" . $userNameId . "'");				
-				$userNameCenterId = $result->centers_id;
-				
-				//Selecciono tota la taula connexions per mostrar-les
-				
-				$results = executeQuery($conn, "SELECT * FROM connections");
+			    //Comprovo que la consulta hagi tornat com a minim un resultat
+			    if($results != false){
+				    foreach ($results as $result) {
 
-			    foreach ($results as $result) {
+				    	//Per cada resultat extrec les dades del projecte
+				    	$project = executePreparedQuery($conn, "SELECT * FROM projects WHERE id = :projectId", array(':projectId'=>$result));
 
-			    	$connId = $result->id;
-			    	$connName = $result->name;
-			    	$startDate = formatDate('Y-m-d', 'd/m/Y', $result->startDate);
-			    	$endDate = formatDate('Y-m-d', 'd/m/Y', $result->endDate);        			
-
-			    	//A partir de la id de cada centre en trec el seu nom. Per cada cas comprobo tambe la id de la taula connexio per saver les ID dels centres en questio
-			    	$result = executeQuery($conn, "SELECT c.name FROM centers c, connections conn WHERE c.id = conn.idcenter1 AND conn.id =" . $connId);
-			    	$center1 = $result->name;
-
-                	$result = executeQuery($conn, "SELECT c.name FROM centers c, connections conn WHERE c.id = conn.idcenter2 AND conn.id =" . $connId);
-                	$center2 = $result->name;
+				    	$projId = $project->id;
+				    	$projName = $project->name;
+				    	$startDate = formatDate('Y-m-d', 'd/m/Y', $project->startDate);
+				    	$endDate = formatDate('Y-m-d', 'd/m/Y', $project->endDate);
+				    	$projDescription = $project->description;
                 	
 			?>
 			    	<div class="item shadowBox">
 				    	
-				    	<form id="<?php echo $connId ?>" action="">
+				    	<form id="<?php echo $projId?>" action="">
 
-				    		<input id="hiddenIdConn" type="hidden" name="hiddenIdConn" value="<?php echo $connId ?>" />
-							<input id="hiddenName" type="hidden" name="hiddenName" value="<?php echo $connName ?>" />							
-							<input id="hiddenCenter2" type="hidden" name="hiddenCentre2" value="<?php echo $center2 ?>" />
+				    		<input id="hiddenIdProj" type="hidden" name="hiddenIdProj" value="<?php echo $projId ?>" />
+							<input id="hiddenName" type="hidden" name="hiddenName" value="<?php echo $projName ?>" />
 							<input id="hiddenStartDate" type="hidden" name="hiddenStartDate" value="<?php echo $startDate ?>" />
-							<input id="hiddenEndDate" type="hidden" name="hiddenEndDate" value="<?php echo $endDate ?>" />							
+							<input id="hiddenEndDate" type="hidden" name="hiddenEndDate" value="<?php echo $endDate ?>" />
+							<input id="hiddenProjDesc" type="hidden" name="hiddenProjDesc" value="<?php echo $projDescription ?>" />							
 							
 							<div class="headerItem">
-								<h2 id="connectionName"> <?php echo $connName ?> </h2>
-								<?php if($userRole == 2){ ?>
-								<input id="settings" type="button" onClick="openConfig($(this.form),event)" class="settings" value="&#xf013;">
-								<?php } ?>
-								 
+								<h2 id="projectName"> <?php echo $projName?> </h2>								
+								<input id="settings" type="button" onClick="openConfig($(this.form),event)" class="settings" value="&#xf013;">							 
 							</div>
-							<div class="bodyHeader">
 
-								<h3 id="connectionCenters"><?php echo $center1 . " & " . $center2 ?></h3>
-							</div>
-					</form>
-				</div>			    
+						</form>
+					</div>			    
 
-		    <?php } ?>
-			
+		    <?php }} ?>			
 
 		</div>
-		<?php if($userRole == 2){ ?>
 		<div class="itemAdd shadowBox">
 			<button onclick="createNew()">Afegir nou<br><i class="fa fa-plus"></i></button>
 		</div>
-		<?php } ?>
 	</div>
 
 	<div class="blackScreen" style="display:none">
 		<div class="formBox shadowBox" >
 			<form action="">
-				<input id="hiddenIdConn" type="hidden" name="hiddenIdConn" value="<?php echo $userNameCenterId ?>" />
-				<h3>Edició de la conexió <span id="nameHeader" class="important"></span></h3>
+				<h3>Edició del projecte <span id="nameHeader" class="important"></span></h3>
+				
+				<input id="hiddenConnId" type="hidden" name="hiddenConnId" value="<?php echo $idConnection ?>" />
+
 				<span class="tag">Nom:</span><input id="nameConfig" name="name" class="tag">
 				<span class="tag">Data inici:</span><input id="startDate" disabled name="startDate" class="tag">
 				<span class="tag">Data fi:</span><input id="endDate" name="endDate" class="tag">
-				<span class="tag">Centre 2:</span><select id="center" name="center" class="tag">
-					<?php echo fillDropDownCenters($conn) ?>
-				</select>
+				<span class="tag">Descripció:</span><input id="projDesc" name="projDesc" class="tag">				
 				<p class="center"><input type="button" class="redButton" onClick="saveConfig($(this.form),event)" value="enviar"></p>
 			</form>
 		</div>
-	</div>
-
-	<script type="text/javascript">
-
-		
+	</div>-->
+	
+	<script>
 		var clickedId = "";
 		var action = "update";
 
@@ -130,22 +109,18 @@
 			return req;
 		}	
 
-		
+
 		function openConfig(form, event){			
 			event.preventDefault();
-    		var serialized = ($(form).serializeArray());
-    		
-    		clickedId = serialized[0]['value'];
+			var serialized = ($(form).serializeArray());
+			
+			clickedId = serialized[0]['value'];
 
-    		$('#nameHeader').text(serialized[1]['value']);
-    		$('#nameConfig').val(serialized[1]['value']);
-    		$('#endDate').val(serialized[4]['value']);
-    		$('#startDate').val(serialized[3]['value']);
-    		$('#center').val(serialized[2]['value']);    	
-
-    		if(action == "update"){
-    			$('#center').prop('disabled', 'disabled');
-    		}
+			$('#nameHeader').text(serialized[1]['value']);
+			$('#nameConfig').val(serialized[1]['value']);			
+			$('#startDate').val(serialized[2]['value']);
+			$('#endDate').val(serialized[3]['value']);
+			$('#projDesc').val(serialized[4]['value']);
 
 			$('.blackScreen').show();
 			
@@ -157,22 +132,23 @@
 			//Recuperant dades dels formularis per treballar
 			var serialized = ($(form).serializeArray());
 
-			var userNameCenterId = serialized[0].value;
-			var connName = document.getElementById('nameConfig').value;
-			var connEndDate = document.getElementById('endDate').value;
-			var connCenterName = document.getElementById('center').value;		
+			var idConn = serialized[0]['value'];
+
+			var projName = document.getElementById('nameConfig').value;
+			var projEndDate = document.getElementById('endDate').value;
+			var projDesc = document.getElementById('projDesc').value;				
 
 			//Definint variables per l'ajax
-			var url = "/html/includes/php/connectionsAjax.php?&formId=" + clickedId + "&connName=" + connName + "&connEndDate=" + connEndDate + "&connCenterName=" + connCenterName + "&userNameCenterId=" + userNameCenterId + "&action=" + action;
+			var url = "/html/includes/php/projectsAjax.php?&projId=" + clickedId + "&connId" + idConn + "&projName=" + projName + "&projEndDate=" + projEndDate + "&projDesc=" + projDesc + "&action=" + action;
 			var myQuery = getXMLHTTPRequest();					 		
 
 			$('.blackScreen').hide();
 
 					
 			//Comprobo que tot estigui ple
-			if(connName.length > 0 && connEndDate.length > 0 && connCenterName != "Selecciona un centre"){
+			if(projName.length > 0 && projEndDate.length > 0 && projDesc.length > 0){
 				//Comprovo la data
-				if(compareDates(connEndDate)){					
+				if(compareDates(projEndDate)){					
 
 					myQuery.open("GET", url , true);
 					myQuery.onreadystatechange = responseAjax;		
@@ -190,10 +166,10 @@
 					if(myQuery.status == 200){	
 						
 						var response = JSON.parse(myQuery.responseText);
-
+						
 						//Actualitzo els camps de les connexions:
 						
-						$('form#'+response.connId).find('#connectionName').html(response.connName);
+						$('form#'+response.projId).find('#projectName').html(response.projName);
 						
 					}else{
 						alert("Error " + myQuery.status);
@@ -219,7 +195,7 @@
 
 			if(action == "create"){
 				location.reload();
-			}					
+			}				
 
 		}
 
@@ -233,11 +209,11 @@
 		}
 
 		function resetNew(){
-			var connName = document.getElementById('nameConfig').value = "";
-			$('#nameHeader').text(connName);
-			var connEndDate = document.getElementById('startDate').value = "";
-			var connEndDate = document.getElementById('endDate').value = "";
-			var connCenterName = document.getElementById('center').selectedIndex = 0;
+			var projName = document.getElementById('nameConfig').value = "";
+			$('#nameHeader').text(projName);
+			var projEndDate = document.getElementById('startDate').value = "";
+			var projStartDate = document.getElementById('endDate').value = "";
+			
 		}
 
 		function resizeMenu(){
@@ -312,5 +288,6 @@
 			navReset();
 		});
 	</script>
+	
 </body>
 </html>
