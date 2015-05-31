@@ -48,19 +48,20 @@ function saveConfig(form, event){
 	var serialized = ($(form).serializeArray());
 
 	var userNameCenterId = serialized[0].value;
+	var connCenter1Name = serialized[1].value;
 	var connName = document.getElementById('nameConfig').value;
 	var connEndDate = document.getElementById('endDate').value;
-	var connCenterName = document.getElementById('center').value;		
+	var connCenter2Name = document.getElementById('center').value;		
 
 	//Definint variables per l'ajax
-	var url = "/html/includes/php/connectionsAjax.php?&formId=" + clickedId + "&connName=" + connName + "&connEndDate=" + connEndDate + "&connCenterName=" + connCenterName + "&userNameCenterId=" + userNameCenterId + "&action=" + action;
+	var url = "/html/includes/php/connectionsAjax.php?&formId=" + clickedId + "&connName=" + connName + "&connEndDate=" + connEndDate + "&connCenter1Name=" + connCenter1Name + "&connCenter2Name=" + connCenter2Name + "&userNameCenterId=" + userNameCenterId + "&action=" + action;
 	var myQuery = getXMLHTTPRequest();					 		
 
 	$('.blackScreen').hide();
 
 			
 	//Comprobo que tot estigui ple
-	if(connName.length > 0 && connEndDate.length > 0 && connCenterName != "Selecciona un centre"){
+	if(connName.length > 0 && connEndDate.length > 0 && connCenter2Name != "Selecciona un centre"){
 		//Comprovo la data
 		if(compareDates(connEndDate)){					
 
@@ -73,17 +74,28 @@ function saveConfig(form, event){
 	}else{
 		alert("Falta algun camp");
 	}	
-		
+
 	function responseAjax(){
 
 		if(myQuery.readyState == 4){		
-			if(myQuery.status == 200){	
-				
-				var response = JSON.parse(myQuery.responseText);
+			if(myQuery.status == 200){
 
-				//Actualitzo els camps de les connexions:
+				var response = myQuery.responseText;	
 				
-				$('form#'+response.connId).find('#connectionName').html(response.connName);
+				if(action == "update"){
+					response = JSON.parse(response);
+				
+					//Actualitzo els camps de les connexions:						
+					$('form#'+response.connId).find('#connectionName').html(response.connName);
+				}
+
+				//Si el nom existeix al intentar cerear la connexio, torna missatge d'error.
+				//Si no el tira recarega la pagina per mostrar el nou projecte
+				if(action == "create" && response.length > 0){
+					alert(myQuery.responseText);
+				}else if(action == "create" && response.length == 0){
+					location.reload();
+				}										
 				
 			}else{
 				alert("Error " + myQuery.status);
@@ -105,12 +117,6 @@ function saveConfig(form, event){
 		return todayDate < setEndDate;
 
 	}
-
-
-	if(action == "create"){
-		location.reload();
-	}					
-
 }
 
 function createNew(){

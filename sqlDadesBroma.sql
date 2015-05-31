@@ -13,9 +13,9 @@ INSERT INTO centers (name, city, zipCode, address) VALUES ('centre5', 'Barcelona
 
 --DADES A INSCRIPTIONS
 
-INSERT INTO inscriptions (users_id, centers_id, startYear, endYear) VALUES (1, 2, 2015, 2016);
-INSERT INTO inscriptions (users_id, centers_id, startYear, endYear) VALUES (1, 3, 2015, 2016);
-INSERT INTO inscriptions (users_id, centers_id, startYear, endYear) VALUES (1, 4, 2015, 2016);
+INSERT INTO inscriptions (users_id, centers_id, startYear, endYear) VALUES (1, 1, 2015, 2016);
+INSERT INTO inscriptions (users_id, centers_id, startYear, endYear) VALUES (2, 2, 2015, 2016);
+
 
 -- DADES A CONNECITONS
 

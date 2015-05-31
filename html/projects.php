@@ -27,21 +27,22 @@
 
 				$idConnection = $_POST["toProjectsIdConn"];				
 				
-				//Selecciono totes les ID de projecte les cuals la seva IDde projecte sigui la del que s'ha clicat
-				$results = executePreparedQuery($conn, "SELECT projects_id FROM connectionsProjects WHERE projects_id = :idConnection", array(':idConnection'=>$idConnection));
-
+				//Seleccionbo tots els projectes els quals la seva ID de conexio es la que revo per POST.
+				
+            	$sql = "SELECT proj.id, proj.name, proj.startDate, proj.endDate, proj.description FROM projects proj, connectionsProjects cp WHERE proj.id = cp.projects_id AND cp.connections_id = :idConnection";
+            	$arr = array(':idConnection'=>$idConnection);
+            	$results = executePreparedQuery($conn, $sql, $arr, true);
+				
 			    //Comprovo que la consulta hagi tornat com a minim un resultat
 			    if($results != false){
+			    	
 				    foreach ($results as $result) {
 
-				    	//Per cada resultat extrec les dades del projecte
-				    	$project = executePreparedQuery($conn, "SELECT * FROM projects WHERE id = :projectId", array(':projectId'=>$result));
-
-				    	$projId = $project->id;
-				    	$projName = $project->name;
-				    	$startDate = formatDate('Y-m-d', 'd/m/Y', $project->startDate);
-				    	$endDate = formatDate('Y-m-d', 'd/m/Y', $project->endDate);
-				    	$projDescription = $project->description;
+				    	$projId = $result->id;
+				    	$projName = $result->name;
+				    	$startDate = formatDate('Y-m-d', 'd/m/Y', $result->startDate);
+				    	$endDate = formatDate('Y-m-d', 'd/m/Y', $result->endDate);
+				    	$projDescription = $result->description;
                 	
 			?>
 			    	<div class="item shadowBox">
@@ -139,7 +140,7 @@
 			var projDesc = document.getElementById('projDesc').value;				
 
 			//Definint variables per l'ajax
-			var url = "/html/includes/php/projectsAjax.php?&projId=" + clickedId + "&connId" + idConn + "&projName=" + projName + "&projEndDate=" + projEndDate + "&projDesc=" + projDesc + "&action=" + action;
+			var url = "/html/includes/php/projectsAjax.php?&projId=" + clickedId + "&idConn=" + idConn + "&projName=" + projName + "&projEndDate=" + projEndDate + "&projDesc=" + projDesc + "&action=" + action;
 			var myQuery = getXMLHTTPRequest();					 		
 
 			$('.blackScreen').hide();
@@ -163,13 +164,24 @@
 			function responseAjax(){
 
 				if(myQuery.readyState == 4){		
-					if(myQuery.status == 200){	
+					if(myQuery.status == 200){
+
+						var response = myQuery.responseText;	
 						
-						var response = JSON.parse(myQuery.responseText);
+						if(action == "update"){
+							response = JSON.parse(response);
 						
-						//Actualitzo els camps de les connexions:
-						
-						$('form#'+response.projId).find('#projectName').html(response.projName);
+							//Actualitzo els camps de les connexions:						
+							$('form#'+response.projId).find('#projectName').html(response.projName);
+						}
+
+						//Si el nom existeix al intentar cerear el projecte, torna missatge d'error.
+						//Si no el tira recarega la pagina per mostrar el nou projecte
+						if(action == "create" && response.length > 0){
+							alert(myQuery.responseText);
+						}else if(action == "create" && response.length == 0){
+							//location.reload();
+						}										
 						
 					}else{
 						alert("Error " + myQuery.status);
@@ -190,12 +202,7 @@
 
 				return todayDate < setEndDate;
 
-			}
-
-
-			if(action == "create"){
-				location.reload();
-			}				
+			}		
 
 		}
 

@@ -23,38 +23,27 @@
 
 			<?php
 
-				//Obtinc el rol i la id del centre l'usuari loguejat
+				//Obtinc el rol de l'usuari 
 				
-				$sql = "SELECT id, role FROM users WHERE name ='" . $user . "'";
-				$query = $conn->query($sql);
-				$result = $query->fetch(PDO::FETCH_OBJ);
-				$userNameId = $result->id;
+				$result = executePreparedQuery($conn, "SELECT role FROM users WHERE name = :user", array(':user'=>$user), false);				
 				$userRole = $result->role;
-
-				$sql = "SELECT centers_id FROM inscriptions WHERE users_id ='" . $userNameId . "'";
-				$query = $conn->query($sql);
-				$result = $query->fetch(PDO::FETCH_OBJ);
-				$userNameCenterId = $result->centers_id;
-				
-				//Ho selecciono tot de conexions per procesa-ho
-
-				$sql = "SELECT * FROM connections";
-			    $query = $conn->query($sql);
-			    $results = $query->fetchAll(PDO::FETCH_OBJ);	
+							    
+			    $results = executeQuery($conn, "SELECT * FROM connections");	
 
 			    foreach ($results as $result) {
 
 			    	$connId = $result->id;
+			    	$userNameCenterId = $result->idcenter1;			    	
 			    	$connName = $result->name;
 			    	$startDate = formatDate('Y-m-d', 'd/m/Y', $result->startDate);
 			    	$endDate = formatDate('Y-m-d', 'd/m/Y', $result->endDate);        			
 
 			    	//A partir de la id de cada centre en trec el seu nom. Per cada cas comprobo tambe la id de la taula connexio per saver les ID dels centres en questio
-			    	$result = executeQuery($conn, "SELECT c.name FROM centers c, connections conn WHERE c.id = conn.idcenter1 AND conn.id =" . $connId);
-			    	$center1 = $result->name;
+			    	$result = executePreparedQuery($conn, "SELECT c.name FROM centers c, connections conn WHERE c.id = conn.idcenter1 AND conn.id = :connId", array(':connId'=>$connId), false);			    	
+			    	$nameCenter1 = $result->name;
 
-                	$result = executeQuery($conn, "SELECT c.name FROM centers c, connections conn WHERE c.id = conn.idcenter2 AND conn.id =" . $connId);
-                	$center2 = $result->name;
+                	$result = executePreparedQuery($conn, "SELECT c.name FROM centers c, connections conn WHERE c.id = conn.idcenter2 AND conn.id = :connId", array(':connId'=>$connId), false);
+                	$nameCenter2 = $result->name;
                 	
 			?>
 			    	<div class="item shadowBox">
@@ -63,7 +52,7 @@
 
 				    		<input id="hiddenIdConn" type="hidden" name="hiddenIdConn" value="<?php echo $connId ?>" />
 							<input id="hiddenName" type="hidden" name="hiddenName" value="<?php echo $connName ?>" />							
-							<input id="hiddenCenter2" type="hidden" name="hiddenCentre2" value="<?php echo $center2 ?>" />
+							<input id="hiddenCenter2" type="hidden" name="hiddenCentre2" value="<?php echo $nameCenter2 ?>" />
 							<input id="hiddenStartDate" type="hidden" name="hiddenStartDate" value="<?php echo $startDate ?>" />
 							<input id="hiddenEndDate" type="hidden" name="hiddenEndDate" value="<?php echo $endDate ?>" />							
 							
@@ -75,7 +64,7 @@
 								 
 							</div>
 							<div class="bodyHeader">
-								<h3 id="connectionCenters"><?php echo $center1 . " & " . $center2 ?></h3>								
+								<h3 id="connectionCenters"><?php echo $nameCenter1 . " & " . $nameCenter2 ?></h3>								
 							</div>							
 					</form>
 					<form action="projects.php" id="toProjects" method="POST">
@@ -97,7 +86,9 @@
 	<div class="blackScreen" style="display:none">
 		<div class="formBox shadowBox" >
 			<form action="">
-				<input id="hiddenIdConn" type="hidden" name="hiddenIdConn" value="<?php echo $userNameCenterId ?>" />
+				<input id="hiddenCenter1Id" type="hidden" name="hiddenCenter1Id" value="<?php echo $userNameCenterId ?>" />			
+				<input id="hiddenNameCenter1" type="hidden" name="hiddenNameCenter1" value="<?php echo $nameCenter1 ?>" />
+
 				<h3>Edició de la conexió <span id="nameHeader" class="important"></span></h3>
 				<span class="tag">Nom:</span><input id="nameConfig" name="name" class="tag">
 				<span class="tag">Data inici:</span><input id="startDate" disabled name="startDate" class="tag">
@@ -109,6 +100,7 @@
 			</form>
 		</div>
 	</div>
-	<script src="./includes/js/resources.js"> </script>
+	<script src="./includes/js/connections.js">
+	</script>
 </body>
 </html>

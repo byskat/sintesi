@@ -34,28 +34,29 @@
 	}
 
 	//Aquesta funcio mira si donada una consulta, aquesta torna algun resultat
-	function executePreparedQuery($conn, $sql, $arr){		
+	function executePreparedQuery($conn, $sql, $arr, $alwaysFetchAll){		
 
             $query = $conn->prepare($sql);                  
             $query->execute($arr);
             $count = $query->rowCount();
-
-            if($count == 0){
-				$result = false;
-			}else if($count == 1){
-				$result = $query->fetch(PDO::FETCH_OBJ);
-			}else{
+       		
+       		//En algun cas m'interesa que tot i retornar un sol resultat em fasi un fetch all
+			if($alwaysFetchAll == true && $count > 0){
 				$result = $query->fetchAll(PDO::FETCH_OBJ);
-			}
+			}else if ($alwaysFetchAll == false){
+				if($count == 0){
+					$result = false;
+				}else if($count == 1){
+					$result = $query->fetch(PDO::FETCH_OBJ);
+				}else{
+					$result = $query->fetchAll(PDO::FETCH_OBJ);
+				}
+			}			
 
 			return $result;        
 	}
 
-	function executeUpdateQuery($conn, $sql){
-		$conn->exec($sql);
-	}
-
-	function executeInsertQuery($conn, $sql, $arr){		            
+	function executeInsertUpdateQuery($conn, $sql, $arr){		            
         $query = $conn->prepare($sql);                  
         $query->execute($arr);
 	} 
