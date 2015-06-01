@@ -10,18 +10,19 @@
 		$sql = "SELECT * FROM `users` WHERE username = :user AND password = md5(:pass)";							
 		$arr = array(':user'=>$_POST['username'], ':pass'=>$_POST['password']);		 
 
-		$result = executePreparedQuery($conn, $sql, $arr);
+		$result = executePreparedQuery($conn, $sql, $arr, false);
 
 		if ($result != false){
 			$_SESSION['userID'] = $result->id;
 			$_SESSION['username'] = $result->username;
+			$_SESSION['role'] = $result->role;
 		}else{
 			$msg = "Credencials invàlides.";
 			$msgColor = 2;
 		}
 	}
 	if (isset($_SESSION['userID'])){
-		$username = $_SESSION['username'];
+		$username = $_SESSION['username'];		
 		header('Location: connections.php');
 	}
 ?>

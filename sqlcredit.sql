@@ -74,6 +74,7 @@ CREATE TABLE IF NOT EXISTS `creditSintesi`.`projects` (
 	`startDate` DATE NOT NULL,
 	`endDate` DATE NOT NULL,
 	`description` TEXT NOT NULL,
+	`outdated` INT(1) NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`)
 )
 ENGINE=InnoDB;
@@ -89,6 +90,7 @@ CREATE TABLE IF NOT EXISTS `creditSintesi`.`connections` (
   `name` VARCHAR(50) NOT NULL,  
   `startDate` DATE NOT NULL,
   `endDate` DATE NOT NULL,
+  `outdated` INT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `fk_connections_centers1_idx` (`idcenter1`),
   INDEX `fk_connections_centers2_idx` (`idcenter2`),

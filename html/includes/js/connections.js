@@ -49,9 +49,9 @@ function saveConfig(form, event){
 
 	var userNameCenterId = serialized[0].value;
 	var connCenter1Name = serialized[1].value;
-	var connName = document.getElementById('nameConfig').value;
-	var connEndDate = document.getElementById('endDate').value;
-	var connCenter2Name = document.getElementById('center').value;		
+	var connName = $('#nameConfig').val();
+	var connEndDate = $('#endDate').val();
+	var connCenter2Name = $('#center').val();		
 
 	//Definint variables per l'ajax
 	var url = "/html/includes/php/connectionsAjax.php?&formId=" + clickedId + "&connName=" + connName + "&connEndDate=" + connEndDate + "&connCenter1Name=" + connCenter1Name + "&connCenter2Name=" + connCenter2Name + "&userNameCenterId=" + userNameCenterId + "&action=" + action;
@@ -87,6 +87,12 @@ function saveConfig(form, event){
 				
 					//Actualitzo els camps de les connexions:						
 					$('form#'+response.connId).find('#connectionName').html(response.connName);
+
+					//Si updateOutdated = true actualitzo l'estat de caducitat.
+					if(response.outdated == true){
+						$('#outdated').hide();						
+						$('#outdatedBtn').show();						
+					}
 				}
 
 				//Si el nom existeix al intentar cerear la connexio, torna missatge d'error.
@@ -129,11 +135,13 @@ function createNew(){
 }
 
 function resetNew(){
-	var connName = document.getElementById('nameConfig').value = "";
-	$('#nameHeader').text(connName);
-	var connStartDate = document.getElementById('startDate').value = "";
-	var connEndDate = document.getElementById('endDate').value = "";
-	var connCenterName = document.getElementById('center').selectedIndex = 0;
+
+	$('#nameHeader').text("");
+	$('#nameConfig').val("");
+	$('#endDate').val("");
+	$('#startDate').val("");
+	$('#center')[0].selectedIndex = 0;
+		
 }
 
 function resizeMenu(){

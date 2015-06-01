@@ -50,19 +50,18 @@
 	      	);
 	      	executeInsertUpdateQuery($conn, $sql, $arr);
 
-	      	/*$sql = "INSERT INTO connectionsProjects (connections_id, projects_id) VALUES (:connId, :projId)";                
+	      	//Selecciono la ID de la ultima insercio i l'asigno com a ID actual del projecte, Despres faig la connexio
+	      	$projId = $conn->lastInsertId();
+
+	      	$sql = "INSERT INTO connectionsProjects (connections_id, projects_id) VALUES (:connId, :projId)";                
 			$arr = array(
 	          ':connId'=>$connId,
 	          ':projId'=>$projId
 	      	);
-	      	executeInsertUpdateQuery($conn, $sql, $arr);*/
+	      	executeInsertUpdateQuery($conn, $sql, $arr);
       	}else{
 	      	echo "Ja existeix un projecte amb aquest nom";
       	}
-
-
-	}
-	
-    
+	}   
 
 ?>

@@ -21,12 +21,7 @@
 	<div class="panel">
 		<div class="itemList">			
 
-			<?php
-
-				//Obtinc el rol de l'usuari 
-				
-				$result = executePreparedQuery($conn, "SELECT role FROM users WHERE name = :user", array(':user'=>$user), false);				
-				$userRole = $result->role;
+			<?php			
 							    
 			    $results = executeQuery($conn, "SELECT * FROM connections");	
 
@@ -36,7 +31,8 @@
 			    	$userNameCenterId = $result->idcenter1;			    	
 			    	$connName = $result->name;
 			    	$startDate = formatDate('Y-m-d', 'd/m/Y', $result->startDate);
-			    	$endDate = formatDate('Y-m-d', 'd/m/Y', $result->endDate);        			
+			    	$endDate = formatDate('Y-m-d', 'd/m/Y', $result->endDate);
+			    	$outdated = $result->outdated;        			
 
 			    	//A partir de la id de cada centre en trec el seu nom. Per cada cas comprobo tambe la id de la taula connexio per saver les ID dels centres en questio
 			    	$result = executePreparedQuery($conn, "SELECT c.name FROM centers c, connections conn WHERE c.id = conn.idcenter1 AND conn.id = :connId", array(':connId'=>$connId), false);			    	
@@ -58,7 +54,7 @@
 							
 							<div class="headerItem">
 								<h2 id="connectionName"> <?php echo $connName ?> </h2>
-								<?php if($userRole == 2){ ?>
+								<?php if($_SESSION['role'] == 2){ ?>
 								<input id="settings" type="button" onClick="openConfig($(this.form),event)" class="settings" value="&#xf013;">
 								<?php } ?>
 								 
@@ -67,16 +63,28 @@
 								<h3 id="connectionCenters"><?php echo $nameCenter1 . " & " . $nameCenter2 ?></h3>								
 							</div>							
 					</form>
-					<form action="projects.php" id="toProjects" method="POST">
+					<form action="projects.php" id="toProjects" method="GET">
 						<input id="toProjectsIdConn" type="hidden" name="toProjectsIdConn" value="<?php echo $connId ?>" />
-						<input type="submit" value="Projects">
+						<?php 
+							
+							if(checkOutdated( formatDate('d/m/Y', 'Y-m-d', $endDate) )){
+								executeInsertUpdateQuery($conn, "UPDATE connections SET outdated = 1 WHERE name = :connName ", array(':connName'=>$connName) );
+							}					
+							
+							if($outdated == 0){
+								echo("<input id=\"outdatedBtn\" type=\"submit\" value=\"Projects\">");
+							}else{
+								echo("<input id=\"outdatedBtn\" type=\"submit\" value=\"Projects\" style=\"display:none\"> ");
+								echo("<div id=\"outdated\">Caducat</div>");
+							}
+						?>
 					</form>
 				</div>			    
 
 		    <?php } ?>			
 
 		</div>
-		<?php if($userRole == 2){ ?>
+		<?php if($_SESSION['role'] == 2){ ?>
 		<div class="itemAdd shadowBox">
 			<button onclick="createNew()">Afegir nou<br><i class="fa fa-plus"></i></button>
 		</div>
@@ -100,7 +108,6 @@
 			</form>
 		</div>
 	</div>
-	<script src="./includes/js/connections.js">
-	</script>
+	<script src="./includes/js/connections.js"></script>	
 </body>
 </html>

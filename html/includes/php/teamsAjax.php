@@ -8,7 +8,6 @@
 	$connCenter1Name = $_GET['connCenter1Name'];
 	$connCenter2Name = $_GET['connCenter2Name'];
 	$idCenter1 = $_GET['userNameCenterId'];
-	$updateOutdated = false;
 
 	//A partir del nom del centre 2 (obtingut del select al crear un centre) trec la seva ID
 	
@@ -17,7 +16,9 @@
 
 	//Processo la base de dades	
 
-	if($_GET['action'] == "update"){							
+	if($_GET['action'] == "update"){
+
+		//executeUpdateQuery($conn, "UPDATE connections SET name = '" . $connName . "', endDate = '" . formatDate('d/m/Y', 'Y-m-d', $connEndDate) . "' WHERE id =" . $formId);
 		
 		$sql = "UPDATE connections SET name = :connName, endDate = :endDate WHERE id = :formId";
 		$arr = array(
@@ -27,13 +28,6 @@
      	);
      	executeInsertUpdateQuery($conn, $sql, $arr);
 
-     	//Si ha modificat la data i deixa d'estar caducat torna el valor de outdated de la BBDD a 0
-		
-		if(checkOutdated( formatDate('d/m/Y', 'Y-m-d', $connEndDate) ) == false){
-			executeInsertUpdateQuery($conn, "UPDATE connections SET outdated = 0 WHERE name = :connName ", array(':connName'=>$connName) );
-			$updateOutdated = true;
-		}		
-
         //Proceso els valors a retornar pel servidor. Aquests valors em permetran actualitzar dinamicament el quadre de la connexio
 
 		$updateValues = array(
@@ -41,8 +35,7 @@
 	    	"connName" => $connName,
 	    	"connCenters"  => $connCenter1Name . " & " . $connCenter2Name,
 	    	"endDate" => $connEndDate,
-	    	"nameCenter2" => $connCenter2Name,
-	    	"outdated" => $updateOutdated
+	    	"nameCenter2" => $connCenter2Name
 		);
 
 		echo json_encode($updateValues);       

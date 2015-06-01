@@ -51,6 +51,8 @@
 				}else{
 					$result = $query->fetchAll(PDO::FETCH_OBJ);
 				}
+			}else{
+				$result = false;
 			}			
 
 			return $result;        
@@ -64,6 +66,21 @@
 	function formatDate($formatIn, $formatOut, $date){
 		$date = DateTime::createFromFormat($formatIn, $date);    
         return $date->format($formatOut);
+	}
+
+	function checkOutdated($endDate){
+
+		$today = date("Y-m-d");
+		$expire = $endDate;	
+
+		$todayDate = strtotime($today);
+		$expireDate = strtotime($expire);
+
+		if($expireDate < $todayDate){
+			return true;
+		}else{
+			return false;
+		}
 	}	
 
 ?>

@@ -3,7 +3,7 @@
 	require('./includes/php/userValidation.inc.php');
 	require('./includes/php/functions.inc.php');
 
-	if(!isset($_GET["toProjectsIdConn"])){	
+	if(!isset($_GET["toTeamsProjId"])){	
 		header('Location: ./login.php');
 	}
 ?>
@@ -11,7 +11,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Projectes</title>        
+    <title>Equips</title>        
     <?php require('./includes/php/header.inc.php'); ?>
 </head>
 <body>
@@ -63,11 +63,6 @@
 								<?php } ?>							 
 							</div>
 
-						</form>
-						<form action="teams.php" id="toProjects" method="GET">
-							<input id="toTeamsProjId" type="hidden" name="toTeamsProjId" value="<?php echo $projId ?>" />
-							<input id="toTeamsDesc" type="hidden" name="toTeamsDesc" value="<?php echo $projDescription ?>" />
-							<input type="submit" value="Projects">
 						</form>
 					</div>			    
 
