@@ -2,7 +2,8 @@
 	require('../../../includes/php/db.inc.php');
 	require('./functions.inc.php');
 	
-	$projId = $_GET['projId'];
+	$formId = $_GET['formId'];
+	$projId = $_GET['idProj'];
 	$connId = $_GET['idConn'];
 	$projName = $_GET['projName'];
 	$projEndDate = $_GET['projEndDate'];
@@ -26,6 +27,7 @@
         //Proceso els valors a retornar pel servidor. Aquests valors em permetran actualitzar dinamicament el quadre de la connexio
 
 		$updateValues = array(
+			"formId" => $formId,
 			"projId" => $projId,
 	    	"projName" => $projName,
 	    	"endDate" => $projEndDate,
@@ -34,12 +36,28 @@
 
 		echo json_encode($updateValues);       
 
-	}else if($action == "create"){		
-		
+	}else if($action == "create"){
+
+		$foundInThisConn = false;
+
 		//Comprovo que no es pugui crear un projecte amb el mateix nom
-		$results = executePreparedQuery($conn, "SELECT id FROM projects WHERE name = :projName", array(':projName'=>$projName), false);
+		$results = executePreparedQuery($conn, "SELECT id FROM projects WHERE name = :projName", array(':projName'=>$projName), false);	
+
+		if($results != false){
+			//Per tal de que dues conexions diferents puguin tenir un projecte amb el mateix nom. Necesito saver de quina connexio pertany el resultat. Selecciono totes les id_de connexio les cuals continguin aquella id de projecte
+			$ids_conn = executePreparedQuery($conn, "SELECT connections_id FROM `connectionsProjects` WHERE projects_id = :projId", array(':projId'=>$results->id), true);
+			//Per cada resultat comprovo si el num de connexio actual es correspon amb algun dels resultats.
+			foreach ($ids_conn as $result) {
+
+				if($result->connections_id == $connId){
+					$foundInThisConn = true;
+				}
+			}
+		}	
+
+		 
 		
-		if($results == false){
+		if($results == false || $foundInThisConn == false){
 
 			$sql = "INSERT INTO projects (name, startDate, endDate, description) VALUES (:projName, :startDate, :endDate, :projDesc)";                
 			$arr = array(

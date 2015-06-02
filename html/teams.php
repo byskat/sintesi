@@ -26,12 +26,12 @@
 
 			<?php				
 				
-				$idConnection = $_GET['toProjectsIdConn'];				
+				$idProj = $_GET['toTeamsProjId'];
+				$projDesc = $_GET['toTeamsDesc'];			
 				
 				//Seleccionbo tots els projectes els quals la seva ID de conexio es la que revo per POST.
-				
-            	$sql = "SELECT proj.id, proj.name, proj.startDate, proj.endDate, proj.description FROM projects proj, connectionsProjects cp WHERE proj.id = cp.projects_id AND cp.connections_id = :idConnection";
-            	$arr = array(':idConnection'=>$idConnection);
+            	$sql = "SELECT tms.id, tms.name, tms.startDate, tms.endDate FROM teams tms, teamsProjects tp WHERE tms.id = tp.teams_id AND tp.projects_id = :idProj";
+            	$arr = array(':idProj'=>$idProj);
             	$results = executePreparedQuery($conn, $sql, $arr, true);
 				
 			    //Comprovo que la consulta hagi tornat com a minim un resultat
@@ -39,25 +39,24 @@
 			    	
 				    foreach ($results as $result) {
 
-				    	$projId = $result->id;
-				    	$projName = $result->name;
+				    	$teamId = $result->id;
+				    	$teamName = $result->name;
 				    	$startDate = formatDate('Y-m-d', 'd/m/Y', $result->startDate);
 				    	$endDate = formatDate('Y-m-d', 'd/m/Y', $result->endDate);
-				    	$projDescription = $result->description;
                 	
 			?>
-			    	<div class="item shadowBox">
+					<div style="margin-bottom: 20px; padding:10px; width:100%; background-color:#999; color:white; font-weight:bold;">Descripció del projecte: <?php echo $projDesc ?></div>
+			    	<div class="item shadowBox">		    		
 				    	
-				    	<form id="<?php echo $projId?>" action="">
+				    	<form id="<?php echo $teamId?>" action="">
 
-				    		<input id="hiddenIdProj" type="hidden" name="hiddenIdProj" value="<?php echo $projId ?>" />
-							<input id="hiddenName" type="hidden" name="hiddenName" value="<?php echo $projName ?>" />
+				    		<input id="hiddenIdProj" type="hidden" name="hiddenIdProj" value="<?php echo $teamId ?>" />
+							<input id="hiddenName" type="hidden" name="hiddenName" value="<?php echo $teamName ?>" />
 							<input id="hiddenStartDate" type="hidden" name="hiddenStartDate" value="<?php echo $startDate ?>" />
-							<input id="hiddenEndDate" type="hidden" name="hiddenEndDate" value="<?php echo $endDate ?>" />
-							<input id="hiddenProjDesc" type="hidden" name="hiddenProjDesc" value="<?php echo $projDescription ?>" />							
+							<input id="hiddenEndDate" type="hidden" name="hiddenEndDate" value="<?php echo $endDate ?>" />							
 							
 							<div class="headerItem">
-								<h2 id="projectName"> <?php echo $projName?> </h2>								
+								<h2 id="teamName"> <?php echo $teamName?> </h2>								
 								<?php if($_SESSION['role'] == 2){ ?>
 								<input id="settings" type="button" onClick="openConfig($(this.form),event)" class="settings" value="&#xf013;">
 								<?php } ?>							 
@@ -79,14 +78,14 @@
 	<div class="blackScreen" style="display:none">
 		<div class="formBox shadowBox" >
 			<form action="">
-				<h3>Edició del projecte <span id="nameHeader" class="important"></span></h3>
+				<h3>Edició de l'equip <span id="nameHeader" class="important"></span></h3>
 				
-				<input id="hiddenConnId" type="hidden" name="hiddenConnId" value="<?php echo $idConnection ?>" />
+				<input id="hiddenProjId" type="hidden" name="hiddenProjId" value="<?php echo $idProj ?>" />
+				<input id="hiddenTeamId" type="hidden" name="hiddenTeamId" value="<?php echo $teamId ?>" />
 
 				<span class="tag">Nom:</span><input id="nameConfig" name="name" class="tag">
 				<span class="tag">Data inici:</span><input id="startDate" disabled name="startDate" class="tag">
-				<span class="tag">Data fi:</span><input id="endDate" name="endDate" class="tag">
-				<span class="tag">Descripció:</span><input id="projDesc" name="projDesc" class="tag">				
+				<span class="tag">Data fi:</span><input id="endDate" name="endDate" class="tag">		
 				<p class="center"><input type="button" class="redButton" onClick="saveConfig($(this.form),event)" value="enviar"></p>
 			</form>
 		</div>
@@ -126,7 +125,6 @@
 			$('#nameConfig').val(serialized[1]['value']);			
 			$('#startDate').val(serialized[2]['value']);
 			$('#endDate').val(serialized[3]['value']);
-			$('#projDesc').val(serialized[4]['value']);
 
 			$('.blackScreen').show();
 			
@@ -138,22 +136,22 @@
 			//Recuperant dades dels formularis per treballar
 			var serialized = ($(form).serializeArray());
 
-			var idConn = serialized[0]['value'];
-			var projName = $('#nameConfig').val();
-			var projEndDate = $('#endDate').val();
-			var projDesc = $('#projDesc').val();				
+			var projId = serialized[0]['value'];
+			var teamId = serialized[1]['value']
+			var teamName = $('#nameConfig').val();
+			var teamEndDate = $('#endDate').val();			
 
 			//Definint variables per l'ajax
-			var url = "/html/includes/php/projectsAjax.php?&projId=" + clickedId + "&idConn=" + idConn + "&projName=" + projName + "&projEndDate=" + projEndDate + "&projDesc=" + projDesc + "&action=" + action;
+			var url = "/html/includes/php/teamsAjax.php?&formId=" + clickedId + "&projId=" + projId + "&teamId=" + teamId + "&teamName=" + teamName + "&teamEndDate=" + teamEndDate + "&action=" + action;
 			var myQuery = getXMLHTTPRequest();					 		
 
 			$('.blackScreen').hide();
 
 					
 			//Comprobo que tot estigui ple
-			if(projName.length > 0 && projEndDate.length > 0 && projDesc.length > 0){
+			if(teamName.length > 0 && teamEndDate.length > 0){
 				//Comprovo la data
-				if(compareDates(projEndDate)){					
+				if(compareDates(teamEndDate)){					
 
 					myQuery.open("GET", url , true);
 					myQuery.onreadystatechange = responseAjax;		
@@ -175,7 +173,7 @@
 							response = JSON.parse(response);
 						
 							//Actualitzo els camps de les connexions:						
-							$('form#'+response.projId).find('#projectName').html(response.projName);
+							$('form#'+response.formId).find('#teamName').html(response.teamName);
 						}
 
 						//Si el nom existeix al intentar cerear el projecte, torna missatge d'error.
@@ -183,9 +181,7 @@
 						if(action == "create" && response.length > 0){
 							alert(myQuery.responseText);
 						}else if(action == "create" && response.length == 0){
-
 							location.reload();
-
 						}										
 						
 					}else{
@@ -221,10 +217,10 @@
 
 		function resetNew(){
 
+			$('#nameHeader').text("");
 			$('#nameConfig').val("");			
 			$('#startDate').val("");
-			$('#endDate').val("");
-			$('#projDesc').val("");			
+			$('#endDate').val("");			
 		}
 
 		function resizeMenu(){

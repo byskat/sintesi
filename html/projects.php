@@ -87,6 +87,7 @@
 				<h3>Edició del projecte <span id="nameHeader" class="important"></span></h3>
 				
 				<input id="hiddenConnId" type="hidden" name="hiddenConnId" value="<?php echo $idConnection ?>" />
+				<input id="hiddenProjId" type="hidden" name="hiddenProjId" value="<?php echo $projId ?>" />
 
 				<span class="tag">Nom:</span><input id="nameConfig" name="name" class="tag">
 				<span class="tag">Data inici:</span><input id="startDate" disabled name="startDate" class="tag">
@@ -144,12 +145,13 @@
 			var serialized = ($(form).serializeArray());
 
 			var idConn = serialized[0]['value'];
+			var idProj = serialized[1]['value'];
 			var projName = $('#nameConfig').val();
 			var projEndDate = $('#endDate').val();
 			var projDesc = $('#projDesc').val();				
 
 			//Definint variables per l'ajax
-			var url = "/html/includes/php/projectsAjax.php?&projId=" + clickedId + "&idConn=" + idConn + "&projName=" + projName + "&projEndDate=" + projEndDate + "&projDesc=" + projDesc + "&action=" + action;
+			var url = "/html/includes/php/projectsAjax.php?&formId=" + clickedId + "&idConn=" + idConn + "&idProj=" + idProj + "&projName=" + projName + "&projEndDate=" + projEndDate + "&projDesc=" + projDesc + "&action=" + action;
 			var myQuery = getXMLHTTPRequest();					 		
 
 			$('.blackScreen').hide();
@@ -180,7 +182,7 @@
 							response = JSON.parse(response);
 						
 							//Actualitzo els camps de les connexions:						
-							$('form#'+response.projId).find('#projectName').html(response.projName);
+							$('form#'+response.formId).find('#projectName').html(response.projName);
 						}
 
 						//Si el nom existeix al intentar cerear el projecte, torna missatge d'error.

@@ -58,8 +58,9 @@ ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `creditSintesi`.`teams` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `role` TINYINT UNSIGNED NOT NULL COMMENT '1 - Owner\n2 - Member',
-  `creationDate` DATETIME NOT NULL,
+  `name` VARCHAR(50) NOT NULL,	
+  `startDate` DATE NOT NULL,
+  `endDate` DATE NOT NULL,
   PRIMARY KEY (`id`)
 )
 ENGINE = InnoDB;
