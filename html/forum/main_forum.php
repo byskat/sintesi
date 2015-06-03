@@ -10,6 +10,7 @@
 
 	<div class="panel">
 		<?php 
+			//Crida a la funció que genera el forum.
 			mainForum($conn);
 			$conn=null;
 		?>
