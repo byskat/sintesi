@@ -1,5 +1,6 @@
 <?php
-	require('../includes/php/db.inc.php');
+	require('../../../includes/php/db.inc.php');
+	require('./functions.inc.php');
 	
 	$connName = $_GET['connName'];
 	$connEndDate = $_GET['connEndDate'];
@@ -8,6 +9,7 @@
 
 
 	//Obtenc el nom del centre del creador de la conexio (El necessitare per passar dades que em serivran per actualitzar els camps de la connexio).
+	
 	$sql = "SELECT name FROM centers WHERE id =" . $idCenter1;
 	$query = $conn->query($sql);
 	$result = $query->fetch(PDO::FETCH_OBJ);
@@ -19,18 +21,13 @@
 	$result = $query->fetch(PDO::FETCH_OBJ);
 	$idcenter2 = $result->id;
 
-	//Processo la base de dades
-	
-	function formatDate($dateString){
-        $newDate = DateTime::createFromFormat('d/m/Y', $dateString);    
-        return $newDate->format('Y-m-d');
-    }
+	//Processo la base de dades	
 
 	if($_GET['action'] == "update"){
 
 		$formId = $_GET['formId'];		
 
-		$sql = "UPDATE connections SET name = '" . $connName . "', endDate = '" . formatDate($connEndDate) . "' WHERE id =" . $formId;
+		$sql = "UPDATE connections SET name = '" . $connName . "', endDate = '" . formatDate('d/m/Y', 'Y-m-d', $connEndDate) . "' WHERE id =" . $formId;
         $conn->exec($sql);
 
         //Proceso els valors a retornar pel servidor. Aquests valors em permetran actualitzar dinamicament el quadre de la connexio
@@ -54,7 +51,7 @@
           ':idcenter2'=>strip_tags(trim($idcenter2)),
           ':name'=>strip_tags(trim($connName)),
           ':startDate'=>strip_tags(trim(date('Y-m-d'))),
-          ':endDate'=>strip_tags(trim(formatDate($connEndDate)))
+          ':endDate'=>strip_tags(trim(formatDate('d/m/Y', 'Y-m-d', $connEndDate)))
       ));
 
 	}

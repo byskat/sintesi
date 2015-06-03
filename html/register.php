@@ -1,5 +1,6 @@
 <?php
     require('../includes/php/db.inc.php');
+<<<<<<< HEAD
     require('../includes/php/validation.inc.php');                        
     
     //Generar select de centres
@@ -35,36 +36,40 @@
             return $newDate->format('Y-m-d');
         }
         
+=======
+    require('./includes/php/functions.inc.php');
+
+    if (!empty($_POST['name']) && !empty($_POST['lastName']) && !empty($_POST['birthDay']) && !empty($_POST['email']) && !empty($_POST['username']) && 
+    	!empty($_POST['password']) && !empty($_POST['password1']) && !empty($_POST['startYear']) && !empty($_POST['endYear'])){
+          
+>>>>>>> origin/victor-forum
         //Rols dels professors        
 
         $role = null;
         $orderNumber = null;
         $inserirCentre = false;
-        //Centre valdra per defecte el valor de post, pero si s'insereix un nou centre el valor canviara per aquest. 
-        //Inclus si ni ha un de seleccionat pero insereix un centre nou es prendra el valor del nou
-        $centerValue = $_POST['centers'];
-
+        $centerValue = false; 
+            
         if(!empty($_POST['orderNumber'])){
 
             $orderNumber = $_POST['orderNumber'];
+            $result = executePreparedQuery($conn, "SELECT * FROM teachersValidations WHERE orderNum = :orderNum", array(':orderNum'=>$_POST['orderNumber']));
 
-            $sql = "SELECT * FROM teachersValidations WHERE orderNum = :orderNum";
-            $query = $conn->prepare($sql);                  
-            $query->execute(array(':orderNum'=>$_POST['orderNumber']));
-            $count = $query->rowCount();           
-            
             //Si ha trobat el nombre
-            if ($count == 1){
-                $result = $query->fetch(PDO::FETCH_OBJ);
+            if ($result != false){           
+                
                 //Comprobar que conicideixi amb el nom
+                
                 if($_POST['name'] == $result->name && $_POST['lastName'] == $result->lastName){
                     //Finalment comprovo que el professor no estigui registrat.
                     if($result->used == "no"){
 
-                        $sql = "UPDATE teachersValidations SET used='si' WHERE orderNum =" . $result->orderNum;
-                        $conn->exec($sql);
+                        executeUpdateQuery($conn, "UPDATE teachersValidations SET used='si' WHERE orderNum =" . $result->orderNum);                        
                         $role = 2;
-                        $inserirCentre = true; 
+
+                        if($_POST['centers'] == "startOption"){
+                        	$inserirCentre = true; 
+                        }
 
                     }else{
                         $msg = "Aquest professor ja esta registrat.";
@@ -85,9 +90,7 @@
             if($_POST['nameCenter'] != "" || $_POST['cityCenter'] != "" || $_POST['zipCenter'] != "" || $_POST['addressCenter'] != ""){
                 $msg = "T'has deixat el num de profe";
                 $msgColor = 2;              
-            }else{
-                $role = 1; //Si no s'ha posat el num de profe i no hi ha cap camp de centre ple vol dir que es alumne           
-            }            
+            }        
         }
 
         //Role nomes sera diferent a null si no s'ha definit el num d'ordre (valdra 1 alumne) o tot es correcte valdra 2(professor). D'aquesta manera evito insercions si el professor s'equivoca en alguna dada. 
@@ -95,102 +98,89 @@
 
             if($_POST['startYear'] < $_POST['endYear']){
 
-
                 if($_POST['password'] == $_POST['password1']){                
 
-                    $sql = "SELECT * FROM users WHERE username = :userName";
-                    $query = $conn->prepare($sql);                  
-                    $query->execute(array(':userName'=>$_POST['username']));
-                    $count = $query->rowCount();
-
-                    //Si count es igual a 0 vol dir que l'usuari esta disponible
-                        if($count == 0){
-
-                            $sql = "SELECT * FROM users WHERE email = :email";
-                            $query = $conn->prepare($sql);                  
-                            $query->execute(array(':email'=>$_POST['email']));
-                            $count = $query->rowCount();
+                    $result = executePreparedQuery($conn, "SELECT * FROM users WHERE username = :userName", array(':userName'=>$_POST['username']));
+                 
+                    //Si count es igual a false vol dir no s'ha trobar l'usuari per tant  l'usuari esta disponible
+                        if($result != false){
+                            $result = executePreparedQuery($conn, "SELECT * FROM users WHERE email = :email", array(':email'=>$_POST['email']));    
 
                             //Si no existeix el correu electronic insereixo usuari
-                            if($count == 0){
-
-                                    //Comprovo que s'hagi definit el valor del select
+                            if($count == false){
                                 
-                                    //Insereixo usuari
+                                    //Insereixo usuari                                    
 
                                     $sql = "INSERT INTO `users` (name, lastName, email, role, birthDay, profileImg, password, orderNum, username)
                                             VALUES (:name, :lastName, :email, :role, :birthDay, :profileImg, md5(:pass), :orderNum, :user)";            
-                                    $query = $conn->prepare($sql);                  
-                                    $query->execute(array(
-                                                          ':name'=>strip_tags(trim($_POST['name'])),
-                                                          ':lastName'=>strip_tags(trim($_POST['lastName'])),
-                                                          ':email'=>strip_tags(trim($_POST['email'])),
-                                                          ':role'=>strip_tags(trim($role)),
-                                                          ':birthDay'=>strip_tags(trim(formatDate($_POST['birthDay']))),
-                                                          ':profileImg'=>"./images/profileImages/default.png",
-                                                          ':pass'=>$_POST['password'],
-                                                          ':orderNum'=>$orderNumber,
-                                                          ':user'=>strip_tags(trim($_POST['username']))));  
+                                                  
+                                    $arr = array(':name'=>strip_tags(trim($_POST['name'])),
+                                                 ':lastName'=>strip_tags(trim($_POST['lastName'])),
+                                                 ':email'=>strip_tags(trim($_POST['email'])),
+                                                 ':role'=>strip_tags(trim($role)),
+                                                 ':birthDay'=>strip_tags(trim(formatDate('d/m/Y', 'Y-m-d', $_POST['birthDay']))),
+                                                 ':profileImg'=>"./images/profileImages/default.png",
+                                                 ':pass'=>$_POST['password'],
+                                                 ':orderNum'=>$orderNumber,
+                                                 ':user'=>strip_tags(trim($_POST['username']))
+                                    );
+
+                                    executeInsertQuery($conn, $sql, $arr); 
                                     
                                     if($inserirCentre == true){
+                                        
                                         //Comprovo que el centre que intento inserir o existeixi ja a la base de dades
-                                            
-                                        $sql = "SELECT * FROM centers WHERE name ='" . $_POST['nameCenter'] . "'";
-                                        $query = $conn->query($sql);
-                                        $result = $query->fetch(PDO::FETCH_OBJ); 
-                                        $count = $query->rowCount();
+                              
+                                        $result = executeQuery($conn, "SELECT * FROM centers WHERE name ='" . $_POST['nameCenter'] . "'");
 
-                                        if($count == 0){
-                                            $centerValue = $_POST['nameCenter'];
+                                        if($count == false){                                            
 
                                             //TODO: Comprovar que el centre no existeix a la base de dades.
                                      
                                             $sql = "INSERT INTO `centers` (name, city, zipCode, address) VALUES (:name, :city, :zipCode, :address)";            
-                                            $query = $conn->prepare($sql);                  
-                                            $query->execute(array(
-                                                      ':name'=>strip_tags(trim($_POST['nameCenter'])),
-                                                      ':city'=>strip_tags(trim($_POST['cityCenter'])),
-                                                      ':zipCode'=>strip_tags(trim($_POST['zipCenter'])),
-                                                      ':address'=>strip_tags(trim($_POST['addressCenter']))));
+                                                              
+                                            $arr = array(
+                                                  ':name'=>strip_tags(trim($_POST['nameCenter'])),
+                                                  ':city'=>strip_tags(trim($_POST['cityCenter'])),
+                                                  ':zipCode'=>strip_tags(trim($_POST['zipCenter'])),
+                                                  ':address'=>strip_tags(trim($_POST['addressCenter']))
+                                            );
 
+                                            executeInsertQuery($conn, $sql, $arr);
+                                            $centerValue = strip_tags(trim($_POST['nameCenter']));
                                         }else{
-                                            $centerValue = $_POST['centers'];
+
                                             $msg = "El centre ja existeix.";
                                             $msgColor = 2;
-
                                         }                              
 
-                                    }
-
-                                        
+                                    } else {
+                                    	$centerValue = $_POST['centers'];
+                                    }                                        
 
                                 $msg = "L'usuari s'ha inserit correctement.";
                                 $msgColor = 1;                      
 
-                                //Obtinc la del usuari
+                                //Obtinc la del usuari  
                                 
-                                $sql = "SELECT id FROM users WHERE username ='" . $_POST['username'] . "'";
-                                $query = $conn->query($sql);
-                                $result = $query->fetch(PDO::FETCH_OBJ); 
-                                $user = $result->id;   
+                                $result = executeQuery($conn, "SELECT id FROM users WHERE username ='" . $_POST['username'] . "'");
+                                $user = $result->id; 
 
-                                
                                 //Obtinc la id del centre
                                                        
-                                $sql = "SELECT id FROM centers WHERE name ='" . $centerValue . "'";
-                                $query = $conn->query($sql);
-                                $result = $query->fetch(PDO::FETCH_OBJ);
+                                $result = executeQuery($conn, "SELECT id FROM centers WHERE name ='" . $centerValue . "'");
                                 $center = $result->id;                        
 
                                 //Insereixo inscripcio
                                 
-                                $sql = "INSERT INTO `inscriptions` (users_id, centers_id, startYear, endYear) VALUES (:users_id, :centers_id, :startYear, :endYear)";          
-                                $query = $conn->prepare($sql);                  
-                                $query->execute(array(
-                                                      ':users_id'=> intval($user),
-                                                      ':centers_id'=> intval($center),
-                                                      ':startYear'=> strip_tags(trim($_POST['startYear'])),
-                                                      ':endYear'=> strip_tags(trim($_POST['endYear'])) ));
+                                $sql = "INSERT INTO `inscriptions` (users_id, centers_id, startYear, endYear) VALUES (:users_id, :centers_id, :startYear, :endYear)";
+                                $arr = array(
+                                             ':users_id'=> intval($user),
+                                             ':centers_id'=> intval($center),
+                                             ':startYear'=> strip_tags(trim($_POST['startYear'])),
+                                             ':endYear'=> strip_tags(trim($_POST['endYear'])) 
+                                             );
+                                executeInsertQuery($conn, $sql, $arr);
                                 
                             }else{
                                $msg = "El mail ja existeix.";
@@ -208,7 +198,7 @@
                 $msg = "Revisa les dates d'inici i fi";
                 $msgColor = 2;
             } 
-        }       
+        }
 
     }else if(isset($_POST['submit']) ){
 
@@ -223,6 +213,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+<<<<<<< HEAD
         <title>Registre</title>        
 
         <link rel="stylesheet" type="text/css" href="./includes/css/normalize.css">
@@ -236,6 +227,10 @@
         <script src="./includes/datetimepicker/jquery.datetimepicker.js"></script>
 
         
+=======
+        <title>Registre</title>  
+        <?php require('./includes/php/header.inc.php'); ?>
+>>>>>>> origin/victor-forum
     </head>
     <body>
         <div class="imgBg">
@@ -250,7 +245,11 @@
                     
                     <form action="" method="POST">
                     <p>
+<<<<<<< HEAD
                        <input id="name" class="text" type="text" name="name" required placeholder="nom" value="<?php echo $_POST['name'] ?>" />
+=======
+                       <input id="name" class="text" type="text" name="name" required placeholder="nom"  />
+>>>>>>> origin/victor-forum
                     </p>
                     <p>
                        <input id="lastName" class="text" type="text" name="lastName" required placeholder="cognoms" />
@@ -291,9 +290,19 @@
                 </div>
                 <div class="subcontainer second">
                         
+<<<<<<< HEAD
                     <p>                   
                         <select class="text addCenterCamp" name="centers" id="centers">
                             <?php echo $options ?>
+=======
+                    <p>
+                       <input id="orderNumber" class="text teacherInput orderInput" type="text" name="orderNumber" placeholder="nombre d'ordre (nomes professors)" />
+                    </p>
+
+                    <p>                   
+                        <select class="text addCenterCamp" name="centers" id="centers">
+                            <?php echo fillDropDownCenters($conn) ?>
+>>>>>>> origin/victor-forum
                         </select>                   
                         <span class="addCenterButton">
                             <a><i class="fa fa-plus"></i></a>
@@ -301,10 +310,13 @@
                     </p>
 
                     <p>
+<<<<<<< HEAD
                        <input id="orderNumber" class="text teacherInput" type="text" name="orderNumber" placeholder="nombre d'ordre (nomes professors)" />
                     </p>
 
                     <p>
+=======
+>>>>>>> origin/victor-forum
                        <input id="nameCenter" class="text teacherInput" type="text" name="nameCenter" placeholder="nom del nou centre" />
                     </p>
 
@@ -318,17 +330,25 @@
 
                     <p>
                        <input id="adressCenter" class="text teacherInput" type="text" name="addressCenter" placeholder="adressa del nou centre" />
+<<<<<<< HEAD
                     </p>
 
                     <!--<p class="center">
                         <input type="button" class="btnFoto" name="btnFoto" value="sel·lcciona la foto" onclick="getFile()">
                         <input type="file" id="profileImg" name="profileImg" class="selectFile">
                     </p>-->
+=======
+                    </p>             
+>>>>>>> origin/victor-forum
 
                     <p class="center">
                         <input class="redButton" type="submit" name="submit" value="Registre" /><br />
                     </p>
                     </form>
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/victor-forum
                 </div>
                 
                 <div style="clear:both"></div>
@@ -336,6 +356,7 @@
                 <p class="center loginLink">
                     <a class="link" href="login.php">Login</a>
                 </p>
+<<<<<<< HEAD
 
             </div>
             <div style="clear:both"></div>
@@ -412,6 +433,20 @@
                 </p>
             </div>
 
+=======
+                
+                <?php require('./includes/php/showMessage.inc.php'); ?>       
+
+            </div>
+            <div style="clear:both"></div>
+
+            <div class="paddingTop"></div>
+
+            <script src="./includes/js/register.js"> </script>
+
+               
+
+>>>>>>> origin/victor-forum
         </div>
     </body>
 </html>

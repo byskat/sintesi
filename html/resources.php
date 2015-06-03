@@ -1,5 +1,6 @@
 <?php
 	require('../includes/php/db.inc.php');
+<<<<<<< HEAD
 	session_start();
 	if (isset($_SESSION['userID'])){
 		$userID = $_SESSION['userID'];
@@ -19,6 +20,10 @@
     foreach ($results as $result) {                                
         $options .= "<option value='" . $result->name . "'>". $result->name . "</option>";
     } 
+=======
+	require('./includes/php/userValidation.inc.php');
+	require('./includes/php/functions.inc.php');
+>>>>>>> origin/victor-forum
 
 ?>
 <!DOCTYPE html>
@@ -26,106 +31,56 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Panell</title>        
-    
-    <link rel="stylesheet" type="text/css" href="./includes/css/normalize.css">
-    <link rel="stylesheet" type="text/css" href="./includes/css/jquery-ui-1.11.4/jquery-ui.css">
-    <link rel="stylesheet" type="text/css" href="./includes/css/style.css" />
-    <link rel="stylesheet" type="text/css" href="./includes/fonts/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="./includes/datetimepicker/jquery.datetimepicker.css"/>
-
-    <script src="./includes/js/jquery-2.1.4/jquery-2.1.4.js"></script>
-    <script src="./includes/js/jquery-ui-1.11.4/jquery-ui.js"></script>
-    <script src="./includes/datetimepicker/jquery.datetimepicker.js"></script>
+    <?php require('./includes/php/header.inc.php'); ?>
 </head>
 <body>
 
-	<div class="header">
-		<div class="login">
-			<img src="images/assets/user_placeholder_res.jpeg">
-			<p>Benvingut, <span id="userBox" class="important userLink"><?php echo $user ?></span></p>
-			<div class="userBox arrowBox" style="display:none"><a href="logout.php"><span class="important">Logout?</span></a></div>
-		</div>
-
-	</div>
-
-	<nav class="nav">
-		<ul>
-			<li>
-				<div class="ico"><i class="fa fa-home"></i></div>
-				<div class="option"></div>
-				<p class="text"><a href="#" class="text">home</a></p>
-			</li>
-			<li class="search">
-				<div class="ico"><i class="fa fa-search"></i></div>
-				<input type="hidden" autofocus="true" />
-				<input type="text" class="search" placeholder="search...">
-			</li>
-			
-			<li>
-				<div class="ico"><i class="fa fa-paper-plane"></i></div>
-				<div class="option"></div>
-				<p class="text"><a href="#" class="text">missatges</a></p>
-			</li>
-			<li>
-				<div class="ico"><i class="fa fa-cog"></i></div>
-				<div class="option"></div>
-				<p class="text"><a href="#" class="text">opcións</a></p>
-			</li>
-			<li>
-				<div class="ico"><i class="fa fa-question"></i></div>
-				<div class="option"></div>
-				<p class="text"><a href="#" class="text">ajuda</a></p>
-			</li>
-
-		</ul>
-	</nav>
+	<?php
+		require('./includes/php/topBar.inc.php');
+		require('./includes/php/leftMenu.inc.php');
+	?>	
 
 	<div class="panel">
-		<div class="itemList">
-			
+		<div class="itemList">			
 
 			<?php
 
-				//Obtinc el rol i la id del centre l'usuari loguejat
+				//Obtinc el rol i la id del centre l'usuari connectat
 				
+				$result = executeQuery($conn, "SELECT id, role FROM users WHERE id ='" . $userID . "'");
+				
+<<<<<<< HEAD
 				$sql = "SELECT id, role FROM users WHERE id ='" . $userID . "'";
 				$query = $conn->query($sql);
 				$result = $query->fetch(PDO::FETCH_OBJ);
+=======
+>>>>>>> origin/victor-forum
 				$userNameId = $result->id;
 				$userRole = $result->role;
 
-				$sql = "SELECT centers_id FROM inscriptions WHERE users_id ='" . $userNameId . "'";
-				$query = $conn->query($sql);
-				$result = $query->fetch(PDO::FETCH_OBJ);
+				//A partir de la ID de l'usuari connectat trec la id del centre al que pertany
+				
+				$result = executeQuery($conn, "SELECT centers_id FROM inscriptions WHERE users_id ='" . $userNameId . "'");				
 				$userNameCenterId = $result->centers_id;
 				
-				//Ho selecciono tot de conexions per procesa-ho
-
-				$sql = "SELECT * FROM connections";
-			    $query = $conn->query($sql);
-			    $results = $query->fetchAll(PDO::FETCH_OBJ);			    		                                
+				//Selecciono tota la taula connexions per mostrar-les
+				
+				$results = executeQuery($conn, "SELECT * FROM connections");
 
 			    foreach ($results as $result) {
 
 			    	$connId = $result->id;
 			    	$connName = $result->name;
-
-			    	$newDate = DateTime::createFromFormat('Y-m-d', $result->startDate);    
-        			$startDate = $newDate->format('d/m/Y');
-
-        			$newDate = DateTime::createFromFormat('Y-m-d', $result->endDate);    
-        			$endDate = $newDate->format('d/m/Y');
+			    	$startDate = formatDate('Y-m-d', 'd/m/Y', $result->startDate);
+			    	$endDate = formatDate('Y-m-d', 'd/m/Y', $result->endDate);        			
 
 			    	//A partir de la id de cada centre en trec el seu nom. Per cada cas comprobo tambe la id de la taula connexio per saver les ID dels centres en questio
-			    	$sql = "SELECT c.name FROM centers c, connections conn WHERE c.id = conn.idcenter1 AND conn.id =" . $connId;
-                	$query = $conn->query($sql);
-                	$result = $query->fetch(PDO::FETCH_OBJ);
-                	$center1 = $result->name;
+			    	$result = executeQuery($conn, "SELECT c.name FROM centers c, connections conn WHERE c.id = conn.idcenter1 AND conn.id =" . $connId);
+			    	$center1 = $result->name;
 
-                	$sql = "SELECT c.name FROM centers c, connections conn WHERE c.id = conn.idcenter2 AND conn.id =" . $connId;
-                	$query = $conn->query($sql);
-                	$result = $query->fetch(PDO::FETCH_OBJ);
-                	$center2 = $result->name;	
+                	$result = executeQuery($conn, "SELECT c.name FROM centers c, connections conn WHERE c.id = conn.idcenter2 AND conn.id =" . $connId);
+                	$center2 = $result->name;
+                	
 			?>
 			    	<div class="item shadowBox">
 				    	
@@ -134,8 +89,8 @@
 							<input id="hiddenName" type="hidden" name="hiddenName" value="<?php echo $connName ?>" />							
 							<input id="hiddenCenter2" type="hidden" name="hiddenCentre2" value="<?php echo $center2 ?>" />
 							<input id="hiddenStartDate" type="hidden" name="hiddenStartDate" value="<?php echo $startDate ?>" />
-							<input id="hiddenEndDate" type="hidden" name="hiddenEndDate" value="<?php echo $endDate ?>" />    
-						
+							<input id="hiddenEndDate" type="hidden" name="hiddenEndDate" value="<?php echo $endDate ?>" />							
+							
 							<div class="headerItem">
 								<h2 id="connectionName"> <?php echo $connName ?> </h2>
 								<?php if($userRole == 2){ ?>
@@ -170,7 +125,7 @@
 				<span class="tag">Data inici:</span><input id="startDate" disabled name="startDate" class="tag">
 				<span class="tag">Data fi:</span><input id="endDate" name="endDate" class="tag">
 				<span class="tag">Centre 2:</span><select id="center" name="center" class="tag">
-					<?php echo $options ?>
+					<?php echo fillDropDownCenters($conn) ?>
 				</select>
 				<p class="center"><input type="button" class="redButton" onClick="saveConfig($(this.form),event)" value="enviar"></p>
 			</form>
@@ -179,6 +134,7 @@
 
 	<script type="text/javascript">
 
+		
 		var clickedId = "";
 		var action = "update";
 
@@ -205,14 +161,14 @@
 		function openConfig(form, event){			
 			event.preventDefault();
     		var serialized = ($(form).serializeArray());
-
-    		clickedId = serialized[0]['value'];   		
+    		
+    		clickedId = serialized[0]['value'];
 
     		$('#nameHeader').text(serialized[1]['value']);
     		$('#nameConfig').val(serialized[1]['value']);
     		$('#endDate').val(serialized[4]['value']);
     		$('#startDate').val(serialized[3]['value']);
-    		$('#center').val(serialized[2]['value']);
+    		$('#center').val(serialized[2]['value']);    	
 
     		if(action == "update"){
     			$('#center').prop('disabled', 'disabled');
@@ -234,13 +190,12 @@
 			var connCenterName = document.getElementById('center').value;		
 
 			//Definint variables per l'ajax
-			var url = "./includes/php/connectionsAjax.php?&formId=" + clickedId + "&connName=" + connName + "&connEndDate=" + connEndDate + "&connCenterName=" + connCenterName + "&userNameCenterId=" + userNameCenterId + "&action=" + action;
+			var url = "/html/includes/php/connectionsAjax.php?&formId=" + clickedId + "&connName=" + connName + "&connEndDate=" + connEndDate + "&connCenterName=" + connCenterName + "&userNameCenterId=" + userNameCenterId + "&action=" + action;
 			var myQuery = getXMLHTTPRequest();					 		
 
 			$('.blackScreen').hide();
 
-			console.log(compareDates(connEndDate));
-			
+					
 			//Comprobo que tot estigui ple
 			if(connName.length > 0 && connEndDate.length > 0 && connCenterName != "Selecciona un centre"){
 				//Comprovo la data
