@@ -58,8 +58,9 @@ ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `creditSintesi`.`teams` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `role` TINYINT UNSIGNED NOT NULL COMMENT '1 - Owner\n2 - Member',
-  `creationDate` DATETIME NOT NULL,
+  `name` VARCHAR(50) NOT NULL,	
+  `startDate` DATE NOT NULL,
+  `endDate` DATE NOT NULL,
   PRIMARY KEY (`id`)
 )
 ENGINE = InnoDB;
@@ -70,12 +71,12 @@ ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `creditSintesi`.`projects` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-	`teams_id` INT(10) UNSIGNED NOT NULL,
-	`creationDate` DATE NOT NULL,
+	`name` VARCHAR(50) NOT NULL,	
+	`startDate` DATE NOT NULL,
+	`endDate` DATE NOT NULL,
 	`description` TEXT NOT NULL,
-	PRIMARY KEY (`id`),
-	INDEX `fk_projects_teams1_idx` (`teams_id`),
-	CONSTRAINT `fk_projects_teams1` FOREIGN KEY (`teams_id`) REFERENCES `teams` (`id`)
+	`outdated` INT(1) NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
 )
 ENGINE=InnoDB;
 
@@ -90,6 +91,7 @@ CREATE TABLE IF NOT EXISTS `creditSintesi`.`connections` (
   `name` VARCHAR(50) NOT NULL,  
   `startDate` DATE NOT NULL,
   `endDate` DATE NOT NULL,
+  `outdated` INT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `fk_connections_centers1_idx` (`idcenter1`),
   INDEX `fk_connections_centers2_idx` (`idcenter2`),
@@ -141,5 +143,19 @@ CREATE TABLE IF NOT EXISTS `creditSintesi`.`inscriptionsTeams` (
 	INDEX `fk_inscription_teams_idx` (`teams_id`),
 	CONSTRAINT `fk_inscription_teams` FOREIGN KEY (`teams_id`) REFERENCES `teams` (`id`),
 	CONSTRAINT `fk_inscriptions_inscriptions` FOREIGN KEY (`inscription_id`) REFERENCES `inscriptions` (`id`)
+)
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `mydb`.`teamsProjects`
+-- -----------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `creditSintesi`.`teamsProjects` (
+	`projects_id` INT(11) UNSIGNED NOT NULL,
+	`teams_id` INT(11) UNSIGNED NOT NULL,  
+    INDEX `fk_teams_projects_idx` (`projects_id`),
+    INDEX `fk_teams_projects1_idx` (`teams_id`),
+  	CONSTRAINT `fk_teams_projects` FOREIGN KEY (`projects_id`) REFERENCES `projects` (`id`),
+  	CONSTRAINT `fk_teams_projects1` FOREIGN KEY (`teams_id`) REFERENCES `teams` (`id`)  
 )
 ENGINE = InnoDB;

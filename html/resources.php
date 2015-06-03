@@ -1,4 +1,5 @@
 <?php
+<<<<<<< HEAD
 	require('../includes/php/db.inc.php');
 <<<<<<< HEAD
 	session_start();
@@ -341,3 +342,7 @@
 	</script>
 </body>
 </html>
+=======
+	echo("RESOURCES");
+?>
+>>>>>>> 2430dde52a4c3b7f85565af1ba1daed9fcb9b349

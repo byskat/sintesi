@@ -53,7 +53,7 @@
         if(!empty($_POST['orderNumber'])){
 
             $orderNumber = $_POST['orderNumber'];
-            $result = executePreparedQuery($conn, "SELECT * FROM teachersValidations WHERE orderNum = :orderNum", array(':orderNum'=>$_POST['orderNumber']));
+            $result = executePreparedQuery($conn, "SELECT * FROM teachersValidations WHERE orderNum = :orderNum", array(':orderNum'=>$_POST['orderNumber']), false);
 
             //Si ha trobat el nombre
             if ($result != false){           
@@ -85,6 +85,8 @@
                 $msgColor = 2;                          
             }            
         }else{
+            //Si no s'ha omplet la casella de num d'ordre de professor el rol es dusuari (1)
+            $role = 1;
             //Tambe evaluo la possibilitat que s'hagi descudat aquest camp si s'ha intentat inserir algun camp al centre
 
             if($_POST['nameCenter'] != "" || $_POST['cityCenter'] != "" || $_POST['zipCenter'] != "" || $_POST['addressCenter'] != ""){
@@ -100,11 +102,11 @@
 
                 if($_POST['password'] == $_POST['password1']){                
 
-                    $result = executePreparedQuery($conn, "SELECT * FROM users WHERE username = :userName", array(':userName'=>$_POST['username']));
+                    $result = executePreparedQuery($conn, "SELECT * FROM users WHERE username = :userName", array(':userName'=>$_POST['username']), false);
                  
                     //Si count es igual a false vol dir no s'ha trobar l'usuari per tant  l'usuari esta disponible
                         if($result != false){
-                            $result = executePreparedQuery($conn, "SELECT * FROM users WHERE email = :email", array(':email'=>$_POST['email']));    
+                            $result = executePreparedQuery($conn, "SELECT * FROM users WHERE email = :email", array(':email'=>$_POST['email']), false);    
 
                             //Si no existeix el correu electronic insereixo usuari
                             if($count == false){
@@ -125,7 +127,7 @@
                                                  ':user'=>strip_tags(trim($_POST['username']))
                                     );
 
-                                    executeInsertQuery($conn, $sql, $arr); 
+                                    executeInsertQuery($conn, $sql, $arr, false); 
                                     
                                     if($inserirCentre == true){
                                         
@@ -146,7 +148,7 @@
                                                   ':address'=>strip_tags(trim($_POST['addressCenter']))
                                             );
 
-                                            executeInsertQuery($conn, $sql, $arr);
+                                            executeInsertQuery($conn, $sql, $arr, false);
                                             $centerValue = strip_tags(trim($_POST['nameCenter']));
                                         }else{
 
@@ -180,7 +182,7 @@
                                              ':startYear'=> strip_tags(trim($_POST['startYear'])),
                                              ':endYear'=> strip_tags(trim($_POST['endYear'])) 
                                              );
-                                executeInsertQuery($conn, $sql, $arr);
+                                executeInsertQuery($conn, $sql, $arr, false);
                                 
                             }else{
                                $msg = "El mail ja existeix.";
@@ -442,9 +444,7 @@
 
             <div class="paddingTop"></div>
 
-            <script src="./includes/js/register.js"> </script>
-
-               
+            <script src="./includes/js/register.js"> </script>              
 
 >>>>>>> origin/victor-forum
         </div>
