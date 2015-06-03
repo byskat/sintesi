@@ -59,18 +59,8 @@
 				  	<input class="redButton" type="submit" name="submit" value="Login" /><br />
 				  	<a class="link" href="register.php">Registre</a>
 					</p>
-<<<<<<< HEAD
-				</form>	
-			</div>
-
-			<div style="clear:both"></div>
-
-			<div class="msgBox">
-				<p><?php if(isset($msg) & !empty($msg)){ echo $msg; ?> <script> $('.msgBox').addClass('activeMsg', 1000, "easeOutBounce"); </script> <?php } ?></p>
-=======
 				</form>
 				<?php require('./includes/php/showMessage.inc.php'); ?>	
->>>>>>> 2430dde52a4c3b7f85565af1ba1daed9fcb9b349
 			</div>
 			
 			<div style="clear:both"></div>

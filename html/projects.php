@@ -30,7 +30,7 @@
 				
 				//Seleccionbo tots els projectes els quals la seva ID de conexio es la que revo per POST.
 				
-            	$sql = "SELECT proj.id, proj.name, proj.startDate, proj.endDate, proj.description FROM projects proj, connectionsProjects cp WHERE proj.id = cp.projects_id AND cp.connections_id = :idConnection";
+            	$sql = "SELECT proj.id, proj.name, proj.startDate, proj.endDate, proj.description, proj.outdated FROM projects proj, connectionsProjects cp WHERE proj.id = cp.projects_id AND cp.connections_id = :idConnection";
             	$arr = array(':idConnection'=>$idConnection);
             	$results = executePreparedQuery($conn, $sql, $arr, true);
 				
@@ -38,13 +38,14 @@
 			    if($results != false){
 			    	
 				    foreach ($results as $result) {
-
+				    	
 				    	$projId = $result->id;
 				    	$projName = $result->name;
 				    	$startDate = formatDate('Y-m-d', 'd/m/Y', $result->startDate);
 				    	$endDate = formatDate('Y-m-d', 'd/m/Y', $result->endDate);
 				    	$projDescription = $result->description;
-                	
+                		$outdated = $result->outdated;
+
 			?>
 			    	<div class="item shadowBox">
 				    	
@@ -67,7 +68,22 @@
 						<form action="teams.php" id="toProjects" method="GET">
 							<input id="toTeamsProjId" type="hidden" name="toTeamsProjId" value="<?php echo $projId ?>" />
 							<input id="toTeamsDesc" type="hidden" name="toTeamsDesc" value="<?php echo $projDescription ?>" />
-							<input type="submit" value="Projects">
+
+							<?php 
+							
+							if(checkOutdated( formatDate('d/m/Y', 'Y-m-d', $endDate) )){
+								executeInsertUpdateQuery($conn, "UPDATE projects SET outdated = 1 WHERE id = :projId ", array(':projId'=>$projId) );
+							}					
+							
+							if($outdated == 0){
+								echo("<input id=\"outdatedBtn\" type=\"submit\" value=\"Teams\">");
+							}else{
+								echo("<span id=\"updated\"> </span>");
+								echo("<div id=\"outdated\">Caducat</div>");
+							}
+						?>
+
+						
 						</form>
 					</div>			    
 
@@ -183,6 +199,12 @@
 						
 							//Actualitzo els camps de les connexions:						
 							$('form#'+response.formId).find('#projectName').html(response.projName);
+
+							//Si updateOutdated = true actualitzo l'estat de caducitat.
+							if(response.outdated == true){
+								$('#outdated').hide();
+								document.getElementById('updated').innerHTML = "<input id=\"outdatedBtn\" type=\"submit\" value=\"Teams\">";				
+							}
 						}
 
 						//Si el nom existeix al intentar cerear el projecte, torna missatge d'error.
