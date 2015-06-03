@@ -24,8 +24,6 @@
 
         executeInsertUpdateQuery($conn, $sql, $arr);
 
-<<<<<<< HEAD
-=======
         //Si ha modificat la data i deixa d'estar caducat torna el valor de outdated de la BBDD a 0
 		
 		if(checkOutdated( formatDate('d/m/Y', 'Y-m-d', $projEndDate) ) == false){
@@ -33,7 +31,6 @@
 			$updateOutdated = true;
 		}		
 
->>>>>>> oscar
         //Proceso els valors a retornar pel servidor. Aquests valors em permetran actualitzar dinamicament el quadre de la connexio
 
 		$updateValues = array(
@@ -41,12 +38,8 @@
 			"projId" => $projId,
 	    	"projName" => $projName,
 	    	"endDate" => $projEndDate,
-<<<<<<< HEAD
-	    	"projDesc" => $projDesc
-=======
 	    	"projDesc" => $projDesc,
 	    	"outdated" => $updateOutdated
->>>>>>> oscar
 		);
 
 		echo json_encode($updateValues);       

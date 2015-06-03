@@ -30,11 +30,7 @@
 				
 				//Seleccionbo tots els projectes els quals la seva ID de conexio es la que revo per POST.
 				
-<<<<<<< HEAD
-            	$sql = "SELECT proj.id, proj.name, proj.startDate, proj.endDate, proj.description FROM projects proj, connectionsProjects cp WHERE proj.id = cp.projects_id AND cp.connections_id = :idConnection";
-=======
             	$sql = "SELECT proj.id, proj.name, proj.startDate, proj.endDate, proj.description, proj.outdated FROM projects proj, connectionsProjects cp WHERE proj.id = cp.projects_id AND cp.connections_id = :idConnection";
->>>>>>> oscar
             	$arr = array(':idConnection'=>$idConnection);
             	$results = executePreparedQuery($conn, $sql, $arr, true);
 				
@@ -42,22 +38,14 @@
 			    if($results != false){
 			    	
 				    foreach ($results as $result) {
-<<<<<<< HEAD
-
-=======
 				    	
->>>>>>> oscar
 				    	$projId = $result->id;
 				    	$projName = $result->name;
 				    	$startDate = formatDate('Y-m-d', 'd/m/Y', $result->startDate);
 				    	$endDate = formatDate('Y-m-d', 'd/m/Y', $result->endDate);
 				    	$projDescription = $result->description;
-<<<<<<< HEAD
-                	
-=======
                 		$outdated = $result->outdated;
 
->>>>>>> oscar
 			?>
 			    	<div class="item shadowBox">
 				    	
@@ -80,9 +68,6 @@
 						<form action="teams.php" id="toProjects" method="GET">
 							<input id="toTeamsProjId" type="hidden" name="toTeamsProjId" value="<?php echo $projId ?>" />
 							<input id="toTeamsDesc" type="hidden" name="toTeamsDesc" value="<?php echo $projDescription ?>" />
-<<<<<<< HEAD
-							<input type="submit" value="Projects">
-=======
 
 							<?php 
 							
@@ -99,7 +84,6 @@
 						?>
 
 						
->>>>>>> oscar
 						</form>
 					</div>			    
 
@@ -215,15 +199,12 @@
 						
 							//Actualitzo els camps de les connexions:						
 							$('form#'+response.formId).find('#projectName').html(response.projName);
-<<<<<<< HEAD
-=======
 
 							//Si updateOutdated = true actualitzo l'estat de caducitat.
 							if(response.outdated == true){
 								$('#outdated').hide();
 								document.getElementById('updated').innerHTML = "<input id=\"outdatedBtn\" type=\"submit\" value=\"Teams\">";				
 							}
->>>>>>> oscar
 						}
 
 						//Si el nom existeix al intentar cerear el projecte, torna missatge d'error.
