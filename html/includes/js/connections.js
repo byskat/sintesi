@@ -90,8 +90,8 @@ function saveConfig(form, event){
 
 					//Si updateOutdated = true actualitzo l'estat de caducitat.
 					if(response.outdated == true){
-						$('#outdated').hide();						
-						$('#outdatedBtn').show();						
+						$('#outdated').hide();
+						document.getElementById('updated').innerHTML = "<input id=\"outdatedBtn\" type=\"submit\" value=\"Projects\">";				
 					}
 				}
 

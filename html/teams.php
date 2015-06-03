@@ -81,7 +81,6 @@
 								if($userFoundInThisProject == false){
 									echo("<input id=\"join\" type=\"button\" onClick=\"joinTeam($(this.form),event)\" value=\"Uneix-te\">");
 									echo("<span id =\"goin\"></span>");
-									//echo("<input id=\"toResources\" type=\"submit\" style=\"display:none\" value=\"Entra\">");
 								}else{
 									echo("<input id=\"toResources\" type=\"submit\" value=\"Entra\">");
 								}
