@@ -35,3 +35,5 @@ INSERT INTO connectionsProjects (`connections_id`, `projects_id`) VALUES ('2', '
 
 -- DADES A INSCRIPTIONS/TEAMS
 INSERT INTO inscriptionsTeams (`teams_id`, `inscription_id`) VALUES ('1', '1');
+
+--Test
