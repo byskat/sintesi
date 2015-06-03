@@ -1,0 +1,82 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400);
+*{
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: 'Open Sans', sans-serif;
+}
+html{
+	height: 100%;
+}
+body{
+	color: #5e5e5e;
+	font: 400 87.5%/1.5em 'Open Sans', sans-serif;
+	background-color: #2C313A;
+	position: relative;
+	height: 100%;
+	overflow-x: hidden; 
+}
+a {
+	color: inherit;
+}
+table{
+	width: 100%;
+	border-collapse: collapse;
+}
+table tr:first-child th {
+  background-color: rgb(160, 160, 160);
+  color: white;
+  padding: 10px;
+  font-size: 1.2em;
+}
+table tr td {
+	padding: 5px;
+}
+
+tr:hover{
+	background-color: rgb(222,222,222); 
+}
+
+.options{
+	width: 60px;
+}
+.enter, .delete{
+	width: 100%;
+	height: 100%;
+	border: 0;
+	color: white;
+	outline: none;
+	transition: background 0.3s ease-in-out;
+}
+.add{
+	background-color: rgb(39, 174, 96) !important;
+	transition: background 0.3s ease-in-out;
+}
+.add:hover{
+	background-color: rgb(46, 204, 113) !important;
+}
+.enter{
+	background-color: rgb(2, 73, 89);
+}
+.enter:hover {
+	background-color: rgb(3, 126, 140);
+}
+.delete{
+	background-color: rgb(192, 57, 43);
+}
+.delete:hover{
+	background-color: rgb(231, 76, 60);
+}
+
+.addTopic{
+	display: block;
+	width: 100%;
+	height: 100%;
+	font-size: 1.5em;
+}
+
+/* ------ RESET D'ESTILS ORIGINALS ------ */
+.panel{
+	padding: 0 !important;
+	overflow: hidden;
+}
