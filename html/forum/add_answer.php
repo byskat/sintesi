@@ -1,7 +1,7 @@
 <?php
 require('db.inc.php');
 
-session_start();
+//session_start();
 
 // POST value of id that sent from hidden field 
 

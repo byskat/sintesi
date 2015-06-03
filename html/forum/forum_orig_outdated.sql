@@ -3,6 +3,8 @@ USE `forum` ;
 
 CREATE TABLE `forum_question` (
 `id` int(4) NOT NULL auto_increment,
+`id_team` int(4) NOT NULL auto_increment,
+`open` int(4) NOT NULL auto_increment,
 `topic` varchar(255) NOT NULL default '',
 `detail` longtext NOT NULL,
 `name` varchar(65) NOT NULL default '',

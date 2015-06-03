@@ -12,11 +12,13 @@ $datetime=date("d/m/y h:i:s"); //create date time
 $sql="INSERT INTO forum_question(topic, detail, name, email, datetime)VALUES('$topic', '$detail', '$name', '$email', '$datetime')";
 $result=$conn->query($sql);
 
+
+
 if($result){
-$status = true;
-$_SESSION['id'] = $conn->lastInsertId();
+	$status = true;
+	$_SESSION['id'] = $conn->lastInsertId();
 } else {
-$status = false;
+	$status = false;
 }
 
 $result=null;

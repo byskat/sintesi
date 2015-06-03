@@ -9,14 +9,10 @@
 <body>
 
 	<div class="panel">
-		<div class="itemList">
-
-			<?php 
-				mainForum($conn);
-				$conn=null;
-			?>
-
-		</div>
+		<?php 
+			mainForum($conn);
+			$conn=null;
+		?>
 	</div>
 
 	<script type="text/javascript">

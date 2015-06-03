@@ -24,23 +24,22 @@ table{
 	border-collapse: collapse;
 }
 table tr:first-child th {
-  background-color: rgb(160, 160, 160);
-  color: white;
-  padding: 10px;
+  border-bottom: 5px solid rgb(242, 76, 39);
+  padding: 20px;
   font-size: 1.2em;
 }
 table tr td {
-	padding: 5px;
+	padding: 15px;
 }
 
-tr:hover{
+tr:not(:first-child):hover{
 	background-color: rgb(222,222,222); 
 }
 
 .options{
-	width: 60px;
+	width: 80px;
 }
-.enter, .delete{
+.enter, .delete, .visible{
 	width: 100%;
 	height: 100%;
 	border: 0;
@@ -48,24 +47,23 @@ tr:hover{
 	outline: none;
 	transition: background 0.3s ease-in-out;
 }
+/*
 .add{
-	background-color: rgb(39, 174, 96) !important;
+	color: rgb(39, 174, 96);
 	transition: background 0.3s ease-in-out;
 }
 .add:hover{
 	background-color: rgb(46, 204, 113) !important;
 }
-.enter{
-	background-color: rgb(2, 73, 89);
-}
-.enter:hover {
+*/
+.enter {
 	background-color: rgb(3, 126, 140);
 }
-.delete{
-	background-color: rgb(192, 57, 43);
-}
-.delete:hover{
+.delete {
 	background-color: rgb(231, 76, 60);
+}
+.visible{
+	background-color: rgb(46, 204, 113)
 }
 
 .addTopic{
@@ -75,8 +73,182 @@ tr:hover{
 	font-size: 1.5em;
 }
 
+
+/* -- Topic -- */
+
+/* Topic Section & comments */
+
+.topic{
+	width: 100%;
+	height: auto;
+	margin-bottom: 20px;
+}
+
+.topicHeader{
+	width: 100%;
+	border-bottom: 5px solid rgb(242, 76, 39);
+	padding: 20px 0 10px 20px;
+}
+
+.topicTitle{
+	width: 100%;
+	padding-bottom: 10px;
+}
+
+.topicTitle h1{
+	font-size: 2em;
+	font-weight: bold;
+	text-align: left;
+	background-color: inherit;
+	padding: 0;
+	margin: 0; 
+}
+.topicTitle h1 input{
+	background-color: rgb(240, 240, 240);
+	width: 50%;
+	outline: 0;
+}
+
+.topicSubtitle{
+	color: rgb(192,192,192);
+	font-size: 1em;
+	width: 100%;
+	text-align: left;
+	display: inline-block;
+}
+
+.topicSubtitle button{
+	border: 0;
+	background-color: inherit;
+	margin-left: 10px;
+	outline: none;
+}
+
+.topicBody{
+	padding: 20px;
+}
+
+.topicUser{
+	float:left;
+	width: 20%;
+	min-height: 60px;
+	display: inline-block;
+}
+
+.topicUser span{
+	display: inline-block;
+  vertical-align: middle;
+  margin-top: 5px;
+  margin-left: 10px;
+}
+
+.topicUser img{
+	float: left;
+	width: 60px;
+	height: 60px;
+	border-radius: 99em;
+	vertical-align: middle;
+}
+
+.topicMessage{
+	border-left: 4px solid rgb(192,192,192);
+	padding: 0 20px;
+	float: left;
+	width: 80%;
+	min-height: 100px;
+}
+
+.topicMessage p{
+	white-space:pre-wrap;
+}
+
+.backButton{
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	bottom: 20px;
+	right: 20px;
+	background-color: rgb(192,192,192);
+	line-height: 48px;
+	text-align: center;
+	font-size: 2em;
+}
+
+/* Comment "textarea" section */
+
+.commentSection{
+	width: 70%;
+	float:left;
+}
+
+.commentArea{
+	width: 50%;
+	float: left;
+
+}
+
+.commentArea textarea{
+	width: 100%;
+	max-width: 100%;
+
+	min-height: 100px;
+	border:0;
+	border-bottom: 4px solid rgb(192,192,192);
+	padding: 10px;
+	outline: 0;
+	background-color: rgb(240,240,240);
+}
+
+.commentOptions{
+	width: 5%;
+	max-width: 50px;
+	float:left;
+}
+
+.commentOptions button{
+	border: 0;
+	width: 100%;
+	height: 50px;
+	font-size: 1.4em;
+	color: white;
+	outline: 0;
+}
+
+/* -- New Topic -- */
+
+.questionSection{
+	width: 50%;
+	margin-left: 20px;
+}
+
+.questionSection input{
+	width: 50%;
+	margin: 0 0;
+	background-color: inherit;
+	border-bottom: 4px solid rgb(192,192,192);
+	background-color: rgb(240,240,240);
+	margin-bottom: 20px;
+	padding: 10px;
+	outline: 0;
+
+}
+
+
 /* ------ RESET D'ESTILS ORIGINALS ------ */
 .panel{
 	padding: 0 !important;
 	overflow: hidden;
 }
+
+.question{
+	border-left: 4px solid rgb(242, 76, 39) !important;
+}
+
+
+/* ------ HELPERS ------ */
+
+.paddingBottom{margin-bottom: 70px;}
+
+.allHeight{height: 100px !important;}
+.bgGreen{background-color: rgb(39, 174, 96);}
+.bgRed{background-color: rgb(234, 97, 83);}
