@@ -74,7 +74,11 @@
 							if($outdated == 0){
 								echo("<input id=\"outdatedBtn\" type=\"submit\" value=\"Projects\">");
 							}else{
+<<<<<<< HEAD
 								echo("<span id=\"updated\"> </span>");
+=======
+								echo("<input id=\"outdatedBtn\" type=\"submit\" value=\"Projects\" style=\"display:none\"> ");
+>>>>>>> oscar
 								echo("<div id=\"outdated\">Caducat</div>");
 							}
 						?>
