@@ -74,7 +74,11 @@
 						
 						<form id="join" action="resources.php" method="GET">
 
-							<input id="hiddenTeamId" type="hidden" name="hiddenTeamId" value="<?php echo $teamId ?>" />
+						
+							<!--Per si no hi ha cap team llogicament no es pot setejar el valor de teamId per tant ho controlo-->								
+						
+							<input id="hiddenTeamId" type="hidden" name="hiddenTeamId" value="<?php if(isset($teamId)){ echo $teamId; } ?>" />
+							
 							<input id="hiddenInscriptionId" type="hidden" name="hiddenInscriptionId" value="<?php echo $idInscription ?>" />
 							
 							<?php 
@@ -107,7 +111,7 @@
 				<h3>Edició de l'equip <span id="nameHeader" class="important"></span></h3>
 				
 				<input id="hiddenProjId" type="hidden" name="hiddenProjId" value="<?php echo $idProj ?>" />
-				<input id="hiddenTeamId" type="hidden" name="hiddenTeamId" value="<?php echo $teamId ?>" />
+				<input id="hiddenTeamId" type="hidden" name="hiddenTeamId" value="<?php if(isset($teamId)){ echo $teamId; } ?>" />
 
 				<span class="tag">Nom:</span><input id="nameConfig" name="name" class="tag">
 				<span class="tag">Data inici:</span><input id="startDate" disabled name="startDate" class="tag">

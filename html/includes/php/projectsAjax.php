@@ -1,20 +1,20 @@
 <?php
 	require('../../../includes/php/db.inc.php');
-	require('./functions.inc.php');
+	require('./functions.inc.php');	
 	
-	$formId = $_GET['formId'];
 	$projId = $_GET['idProj'];
 	$connId = $_GET['idConn'];
 	$projName = $_GET['projName'];
 	$projEndDate = $_GET['projEndDate'];
 	$projDesc = $_GET['projDesc'];
 	$action = $_GET['action'];
+	$actualitzedSatate = false;
 
 	//Processo la base de dades	
 
-	if($action == "update"){		
+	if($action == "update"){
 		
-		$sql = "UPDATE projects SET name = :projName, endDate = :endDate, description = :projDesc  WHERE id = :projId";
+		$sql = "UPDATE projects SET name = :projName, endDate = :endDate, description = :projDesc WHERE id = :projId";
 		$arr = array(
 	    	':projName'=>strip_tags(trim($projName)),
 	    	':endDate'=>strip_tags(trim(formatDate('d/m/Y', 'Y-m-d', $projEndDate))),
@@ -25,21 +25,20 @@
         executeInsertUpdateQuery($conn, $sql, $arr);
 
         //Si ha modificat la data i deixa d'estar caducat torna el valor de outdated de la BBDD a 0
-		
-		if(checkOutdated( formatDate('d/m/Y', 'Y-m-d', $projEndDate) ) == false){
+      
+		if(checkOutdated( formatDate('d/m/Y', 'Y-m-d', $projEndDate)) == false ){
 			executeInsertUpdateQuery($conn, "UPDATE projects SET outdated = 0 WHERE id = :projId", array(':projId'=>$projId) );
-			$updateOutdated = true;
+			$actualitzedSatate = true;
 		}		
 
         //Proceso els valors a retornar pel servidor. Aquests valors em permetran actualitzar dinamicament el quadre de la connexio
 
 		$updateValues = array(
-			"formId" => $formId,
 			"projId" => $projId,
 	    	"projName" => $projName,
 	    	"endDate" => $projEndDate,
 	    	"projDesc" => $projDesc,
-	    	"outdated" => $updateOutdated
+	    	"procesed" => $actualitzedSatate
 		);
 
 		echo json_encode($updateValues);       

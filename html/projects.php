@@ -159,7 +159,6 @@
 			
 			//Recuperant dades dels formularis per treballar
 			var serialized = ($(form).serializeArray());
-
 			var idConn = serialized[0]['value'];
 			var idProj = serialized[1]['value'];
 			var projName = $('#nameConfig').val();
@@ -167,7 +166,7 @@
 			var projDesc = $('#projDesc').val();				
 
 			//Definint variables per l'ajax
-			var url = "/html/includes/php/projectsAjax.php?&formId=" + clickedId + "&idConn=" + idConn + "&idProj=" + idProj + "&projName=" + projName + "&projEndDate=" + projEndDate + "&projDesc=" + projDesc + "&action=" + action;
+			var url = "/html/includes/php/projectsAjax.php?&idConn=" + idConn + "&idProj=" + clickedId + "&projName=" + projName + "&projEndDate=" + projEndDate + "&projDesc=" + projDesc + "&action=" + action;
 			var myQuery = getXMLHTTPRequest();					 		
 
 			$('.blackScreen').hide();
@@ -196,14 +195,14 @@
 						
 						if(action == "update"){
 							response = JSON.parse(response);
-						
 							//Actualitzo els camps de les connexions:						
-							$('form#'+response.formId).find('#projectName').html(response.projName);
+							$('form#'+response.projId).find('#projectName').html(response.projName);
 
 							//Si updateOutdated = true actualitzo l'estat de caducitat.
-							if(response.outdated == true){
+							console.log(response.procesed);
+							if(response.procesed == true){	
 								$('#outdated').hide();
-								document.getElementById('updated').innerHTML = "<input id=\"outdatedBtn\" type=\"submit\" value=\"Teams\">";				
+								document.getElementById("updated").innerHTML = "<input id=\"outdatedBtn\" type=\"submit\" value=\"Teams\">";				
 							}
 						}
 

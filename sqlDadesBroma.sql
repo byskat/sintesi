@@ -1,7 +1,7 @@
 -- DADES A USER
 
 INSERT INTO users (name, lastName, email, birthday, profileImg, username, password, role) VALUES ('bartok', 'algun algun', 'reg.bartok@gmail.com', '2015-10-10', 'path', 'bartok', MD5('123456'), 2);
-INSERT INTO users (name, lastName, email, birthday, profileImg, username, password, role) VALUES ('victor', 'algun algun', 'victor@gmail.com', '2015-10-10', 'path', 'bartok', MD5('1234'), 2);
+INSERT INTO users (name, lastName, email, birthday, profileImg, username, password, role) VALUES ('victor', 'algun algun', 'victor@gmail.com', '2015-10-10', 'path', 'victor', MD5('1234'), 2);
 
 -- DADES A CENTRES
 

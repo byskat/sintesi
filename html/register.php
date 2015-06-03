@@ -26,7 +26,7 @@
                     //Finalment comprovo que el professor no estigui registrat.
                     if($result->used == "no"){
 
-                        executeUpdateQuery($conn, "UPDATE teachersValidations SET used='si' WHERE orderNum =" . $result->orderNum);                        
+                        executeInsertUpdateQuery($conn, "UPDATE teachersValidations SET used='si' WHERE orderNum =" . $result->orderNum);                        
                         $role = 2;
 
                         if($_POST['centers'] == "startOption"){
@@ -67,11 +67,11 @@
                     $result = executePreparedQuery($conn, "SELECT * FROM users WHERE username = :userName", array(':userName'=>$_POST['username']), false);
                  
                     //Si count es igual a false vol dir no s'ha trobar l'usuari per tant  l'usuari esta disponible
-                        if($result != false){
+                        if($result == false){
                             $result = executePreparedQuery($conn, "SELECT * FROM users WHERE email = :email", array(':email'=>$_POST['email']), false);    
-
+                            
                             //Si no existeix el correu electronic insereixo usuari
-                            if($count == false){
+                            if($result == false){
                                 
                                     //Insereixo usuari                                    
 
@@ -89,15 +89,15 @@
                                                  ':user'=>strip_tags(trim($_POST['username']))
                                     );
 
-                                    executeInsertQuery($conn, $sql, $arr, false); 
+                                    executeInsertUpdateQuery($conn, $sql, $arr, false); 
                                     
                                     if($inserirCentre == true){
                                         
-                                        //Comprovo que el centre que intento inserir o existeixi ja a la base de dades
+                                        //Comprovo que el centre que intento inserir no existeixi ja a la base de dades
                               
-                                        $result = executeQuery($conn, "SELECT * FROM centers WHERE name ='" . $_POST['nameCenter'] . "'");
+                                        $result = executePreparedQuery($conn, "SELECT * FROM centers WHERE name = :namecenter", array(':namecenter'=>$_POST['nameCenter']), false);
 
-                                        if($count == false){                                            
+                                        if($count != false){                                            
 
                                             //TODO: Comprovar que el centre no existeix a la base de dades.
                                      
@@ -110,7 +110,7 @@
                                                   ':address'=>strip_tags(trim($_POST['addressCenter']))
                                             );
 
-                                            executeInsertQuery($conn, $sql, $arr, false);
+                                            executeInsertUpdateQuery($conn, $sql, $arr, false);
                                             $centerValue = strip_tags(trim($_POST['nameCenter']));
                                         }else{
 
@@ -144,7 +144,7 @@
                                              ':startYear'=> strip_tags(trim($_POST['startYear'])),
                                              ':endYear'=> strip_tags(trim($_POST['endYear'])) 
                                              );
-                                executeInsertQuery($conn, $sql, $arr, false);
+                                executeInsertUpdateQuery($conn, $sql, $arr, false);
                                 
                             }else{
                                $msg = "El mail ja existeix.";
