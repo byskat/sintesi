@@ -53,9 +53,7 @@
 					$foundInThisConn = true;
 				}
 			}
-		}	
-
-		 
+		}		 
 		
 		if($results == false || $foundInThisConn == false){
 

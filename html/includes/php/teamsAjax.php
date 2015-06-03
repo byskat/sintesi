@@ -35,48 +35,44 @@
 
 	}else if($action == "create"){
 
-		$foundInThisConn = false;
+		$foundInThisProj = false;
 
 		//Comprovo que no es pugui crear un projecte amb el mateix nom
-		$results = executePreparedQuery($conn, "SELECT id FROM projects WHERE name = :projName", array(':projName'=>$projName), false);	
+		$results = executePreparedQuery($conn, "SELECT id FROM teams WHERE name = :teamName", array(':teamName'=>$teamName), false);	
 
 		if($results != false){
 			//Per tal de que dues conexions diferents puguin tenir un projecte amb el mateix nom. Necesito saver de quina connexio pertany el resultat. Selecciono totes les id_de connexio les cuals continguin aquella id de projecte
-			$ids_conn = executePreparedQuery($conn, "SELECT connections_id FROM `connectionsProjects` WHERE projects_id = :projId", array(':projId'=>$results->id), true);
+			$ids_proj = executePreparedQuery($conn, "SELECT projects_id FROM `teamsProjects` WHERE teams_id = :teamId", array(':teamId'=>$results->id), true);
 			//Per cada resultat comprovo si el num de connexio actual es correspon amb algun dels resultats.
-			foreach ($ids_conn as $result) {
+			foreach ($ids_proj as $result) {
 
-				if($result->connections_id == $connId){
-					$foundInThisConn = true;
+				if($result->projects_id == $projId){
+					$foundInThisProj = true;
 				}
 			}
-		}			
-		
-		//Comprovo que no es pugui crear un projecte amb el mateix nom
-		$results = executePreparedQuery($conn, "SELECT id FROM projects WHERE name = :projName", array(':projName'=>$projName), false);
-		
-		if($results == false || $foundInThisConn == false){
+		}
+				
+		if($results == false || $foundInThisProj == false){
 
-			$sql = "INSERT INTO projects (name, startDate, endDate, description) VALUES (:projName, :startDate, :endDate, :projDesc)";                
+			$sql = "INSERT INTO teams (name, startDate, endDate) VALUES (:teamName, :startDate, :endDate)";                
 			$arr = array(
-	          ':projName'=>strip_tags(trim($projName)),
+	          ':teamName'=>strip_tags(trim($teamName)),
 	          ':startDate'=>strip_tags(trim(date('Y-m-d'))),
-	          ':endDate'=>strip_tags(trim(formatDate('d/m/Y', 'Y-m-d', $projEndDate))),
-	          ':projDesc'=>strip_tags(trim($projDesc))
+	          ':endDate'=>strip_tags(trim(formatDate('d/m/Y', 'Y-m-d', $endDate)))
 	      	);
 	      	executeInsertUpdateQuery($conn, $sql, $arr);
 
 	      	//Selecciono la ID de la ultima insercio i l'asigno com a ID actual del projecte, Despres faig la connexio
-	      	$projId = $conn->lastInsertId();
+	      	$teamId = $conn->lastInsertId();
 
-	      	$sql = "INSERT INTO connectionsProjects (connections_id, projects_id) VALUES (:connId, :projId)";                
+	      	$sql = "INSERT INTO teamsProjects (teams_id, projects_id) VALUES (:teamId, :projId)";                
 			$arr = array(
-	          ':connId'=>$connId,
+	          ':teamId'=>$teamId,
 	          ':projId'=>$projId
 	      	);
 	      	executeInsertUpdateQuery($conn, $sql, $arr);
       	}else{
-	      	echo "Ja existeix un projecte amb aquest nom";
+	      	echo "Ja existeix un equip amb aquest nom";
       	}
 	}   
 

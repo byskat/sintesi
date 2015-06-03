@@ -22,12 +22,17 @@
 	?>	
 
 	<div class="panel">
-		<div class="itemList">		
+		<div class="itemList">
+			<div style="margin-bottom: 20px; padding:10px; width:100%; background-color:#999; color:white; font-weight:bold;">Descripció del projecte: <?php echo $_GET['toTeamsDesc'] ?></div>		
 
 			<?php				
 				
 				$idProj = $_GET['toTeamsProjId'];
-				$projDesc = $_GET['toTeamsDesc'];			
+				
+				//Obtenc la id de la inscripcio de l'usuari a partir de la id d'usuari
+				$result = executePreparedQuery($conn, "SELECT * FROM inscriptions WHERE users_id = :userId", array(':userId'=>$_SESSION['userID']), false);
+				
+				$idInscription = $result->id;
 				
 				//Seleccionbo tots els projectes els quals la seva ID de conexio es la que revo per POST.
             	$sql = "SELECT tms.id, tms.name, tms.startDate, tms.endDate FROM teams tms, teamsProjects tp WHERE tms.id = tp.teams_id AND tp.projects_id = :idProj";
@@ -43,9 +48,13 @@
 				    	$teamName = $result->name;
 				    	$startDate = formatDate('Y-m-d', 'd/m/Y', $result->startDate);
 				    	$endDate = formatDate('Y-m-d', 'd/m/Y', $result->endDate);
+
+				    	
+				    	//Miro si l'usuari loguejat esta instrit en l'equip actual
+				    	$userFoundInThisProject = executePreparedQuery($conn, "SELECT * FROM `inscriptionsTeams` WHERE teams_id = :teamId AND inscription_id = :inscription_id", array(':teamId'=>$teamId, 'inscription_id'=>$idInscription), false);
+				    	
                 	
 			?>
-					<div style="margin-bottom: 20px; padding:10px; width:100%; background-color:#999; color:white; font-weight:bold;">Descripció del projecte: <?php echo $projDesc ?></div>
 			    	<div class="item shadowBox">		    		
 				    	
 				    	<form id="<?php echo $teamId?>" action="">
@@ -61,8 +70,25 @@
 								<input id="settings" type="button" onClick="openConfig($(this.form),event)" class="settings" value="&#xf013;">
 								<?php } ?>							 
 							</div>
+						</form>					
+						
+						<form id="join" action="resources.php" method="GET">
 
+							<input id="hiddenTeamId" type="hidden" name="hiddenTeamId" value="<?php echo $teamId ?>" />
+							<input id="hiddenInscriptionId" type="hidden" name="hiddenInscriptionId" value="<?php echo $idInscription ?>" />
+							
+							<?php 
+								if($userFoundInThisProject == false){
+									echo("<input id=\"join\" type=\"button\" onClick=\"joinTeam($(this.form),event)\" value=\"Uneix-te\">");
+									echo("<span id =\"goin\"></span>");
+									//echo("<input id=\"toResources\" type=\"submit\" style=\"display:none\" value=\"Entra\">");
+								}else{
+									echo("<input id=\"toResources\" type=\"submit\" value=\"Entra\">");
+								}
+							?>
+							
 						</form>
+						
 					</div>			    
 
 		    <?php }} ?>			
@@ -112,6 +138,31 @@
 				}
 			}
 			return req;
+		}
+
+		function joinTeam(form, event){
+
+			var serialized = ($(form).serializeArray());			
+			var teamId = serialized[0]['value'];
+			var inscriptionId = serialized[1]['value'];			
+
+			var url = "/html/includes/php/userJoinAjax.php?&teamId=" + teamId + "&inscriptionId=" + inscriptionId;
+			var myQuery = getXMLHTTPRequest();
+			
+			myQuery.open("GET", url , true);
+			myQuery.onreadystatechange = responseAjax;		
+			myQuery.send(null);
+
+			function responseAjax(){
+				if(myQuery.readyState == 4){		
+					if(myQuery.status == 200){
+						document.getElementById('goin').innerHTML = "<input id=\"toResources\" type=\"submit\" style=\"display:none\" value=\"Entra\">";
+						$('#toResources').click();						
+					}else{
+						alert("Error " + myQuery.status);
+					}
+				}
+			}
 		}	
 
 
