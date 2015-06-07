@@ -25,14 +25,13 @@ else {
 }
 
 // S'agafen totes les variables POST del formulari de creació.
-$a_name=$_POST['a_name'];
-$a_email=$_POST['a_email'];
 $a_answer=$_POST['a_answer']; 
 $userId=$user->id;
 $datetime=date("d/m/y H:i:s");
 
 // S'insereix la resposta.
-$sql="INSERT INTO forumanswer(question_id, a_id, a_name, a_email, a_answer, a_datetime, id_user)VALUES('$id', '$Max_id', '$a_name', '$a_email', '$a_answer', '$datetime', '$userId')";
+$sql="INSERT INTO forumanswer(question_id, a_id, a_answer, a_datetime, id_user)VALUES('$id', '$Max_id', '$a_answer', '$datetime', '$userId')";
+
 $result=$conn->query($sql);
 
 if($result){

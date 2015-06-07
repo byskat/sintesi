@@ -3,6 +3,7 @@
 //
 function resizeMenu(){
 	var topMenu = $(window).height()/2-nav.height()/2;
+
 	$('.panel').width($(window).width()-75);
 	if(topMenu>68){
 		nav.css({top:(topMenu+"px")});

@@ -192,12 +192,11 @@ tr:not(:first-child):hover{
 /* -- New Topic -- */
 
 .questionSection{
-	width: 50%;
-	margin-left: 20px;
+	margin: 0 20px;
 }
 
 .questionSection input{
-	width: 50%;
+	width: 350px;
 	margin: 0 0;
 	background-color: inherit;
 	border-bottom: 4px solid rgb(192,192,192);
@@ -220,8 +219,16 @@ tr:not(:first-child):hover{
 /* ---- Media queries ----*/
 
 @media 
+only screen and (max-width: 534px){
+	.questionSection input, .commentArea, .commentOptions{
+		width: 100% !important;
+		max-width: 100%;
+	}
+}
+
+@media 
 only screen and (max-width: 831px){
-.topicUser{
+	.topicUser{
 		width: auto;
 		min-width: 0;
 	}

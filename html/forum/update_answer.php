@@ -11,6 +11,7 @@
 	$datetime=date("d/m/y h:i:s");
 
 	$sql="UPDATE forumanswer SET a_answer = '$a_answer', a_datetime = '$datetime' WHERE a_id = '$a_id' AND question_id = '$question_id'";
+	
 	$result=$conn->query($sql);
 
 	$_SESSION['id'] = $question_id;

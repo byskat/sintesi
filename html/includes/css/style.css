@@ -338,7 +338,7 @@ div.header{
 	position: fixed;
 	height: 48px;
 	width: 100%;
-	z-index: 2;
+	z-index: 3;
 }
 
 div.login{
@@ -356,8 +356,10 @@ div.login{
 }
 
 div.login p{
-	width: auto;
+	width: 30%;
+	min-width: 150px;
 	float: right;
+	text-align: right;
 	line-height: 40px;
 }
 
@@ -585,6 +587,7 @@ div.iconImg{
 	font-weight: bold;
 	text-align: left;
 	background-color: inherit;
+	line-height: 25px;
 	padding: 0;
 	margin: 0; 
 }
@@ -614,12 +617,14 @@ div.vidContainer{
 }
 
 video.videoHeader{
+	position: fixed;
 	min-width: 100%;
-	min-height: 100%;
+	min-height: 105%;
+	top: -40px;
 }
 
 div.vidMarkee{
-	position: absolute;
+	position: fixed;
 	min-width: 100%;
 	min-height: 100%;
 	top: 0;
@@ -771,10 +776,106 @@ span.important{
 
 /* --- Media queries --- */
 
-@media screen and (max-width: 400px){
+@media screen and (max-width: 450px){
 	.container{
 		width: 100%;
 		border-radius: 0;
+	}
+
+
+	div.panel{
+		top: 106px !important;
+		width: 100% !important;
+		border-radius: 0 !important;
+		left: 0 !important;
+	}
+
+	nav.nav{
+		top: 0 !important;
+		border-radius: 0 !important;
+		width: 100% !important;
+		display: inline-block !important;
+		margin-top: 46px !important;
+		position: inherit !important;
+		z-index: 2;
+	}
+
+	div.option{
+		display: none;
+	}
+
+	nav.nav li{
+		width: 25% !important;
+		float: left !important;
+	}
+
+	div.ico{
+		margin-left: 30px;
+	}
+
+	nav.nav li.search{
+		display: none !important;
+	}
+
+	p.text{
+		display: none;
+	}
+
+	div.item, div.itemAdd{
+		margin: 0 0 20px 0;
+		width: 100% !important;
+	}
+
+	div.commentArea textarea{
+		margin-bottom: 20px !important;
+	}
+
+	div.commentOptions{
+		margin-bottom: 20px !important;
+	}
+
+	div.commentSection{
+		width: 100% !important;
+		min-width: 0 !important;
+	}
+
+	div.question{
+		border-left: 0 !important;
+		border-bottom: 4px solid rgb(242, 76, 39) !important;
+	}
+
+	div.topicMessage{
+		border-left: 0 !important;
+		border-bottom: 4px solid rgb(192,192,192) !important;
+		width: 100% !important;
+		max-width: 0 !important;
+		min-width: 100% !important;
+		padding: 0;
+	}
+
+	div.shadowBox{
+		width: 100% !important;
+	}
+
+	div.optionsContainer{
+		width: 100%;
+		min-width: 0 !important;
+		overflow: hidden;
+	}
+
+	div.optionsContainer input[type='text'], div.optionsContainer input[type='password']{
+		width: 100% !important;
+	}
+
+	div.optionName{
+		text-align: left !important;
+		width: 100% !important;
+		line-height: 15px;
+		margin-top: 15px;
+	}
+
+	.allHeight{
+		height: 40px !important;
 	}
 }
 
@@ -800,5 +901,6 @@ span.important{
 
 	.backButton{
 		position: fixed;
+		opacity: .7;
 	}
 }

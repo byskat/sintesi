@@ -15,13 +15,13 @@
 		require('./includes/php/topBar.inc.php');
 		require('./includes/php/leftMenu.inc.php');
 	?>
-	<div class="panel darkBg">
-
-
+	<div class="panel darkBg" style="border: 0; right: 0;">
 		<div class="vidContainer">
 
-			<video autoplay loop muted class="videoHeader">
-				<source src="images/The Mountain_sd.mp4">
+			<video autoplay loop muted class="videoHeader" id="videoHeader">
+				<source src="images/The Mountain_sd.mp4" type="video/mp4">
+				<source src="images/The Mountain_sd.ogv" type="video/ogv">
+				<source src="images/The Mountain_sd.webm" type="video/webm">
 			</video>
 			<div class="vidMarkee"></div>
 
@@ -68,11 +68,9 @@
 	<script type="text/javascript" src="./includes/js/functions.inc.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function(){
-		console.log($('.vidSection').height());
-		$('.panel').height($('.vidSection').height());
+		$('.panel').height($('.vidSection').outerHeight());
 		$(window).resize(function (){
-			console.log($('.vidSection').height());
-			$('.panel').height($('.vidSection').height());
+			$('.panel').height($('.vidSection').outerHeight());
 		});
 	});
 	</script>

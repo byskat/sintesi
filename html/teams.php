@@ -87,11 +87,11 @@
 							<!--Per si no hi ha cap team llogicament no es pot setejar el valor de teamId per tant ho controlo-->	
 														
 							<input id="hiddenInscriptionId" type="hidden" name="hiddenInscriptionId" value="<?php echo $idInscription ?>" />
-							<input id="hiddenTeamName" type="hidden" name="hiddenTeamName" value="<?php if(isset($teamId)){ echo $teamName; } ?>" />
+							<input id="hiddenTeamName" type="hidden" name="hiddenTeamName" value="<?php if(isset($teamName)){ echo $teamName; } ?>" />
 							<input id="hiddenTeamId" type="hidden" name="hiddenTeamId" value="<?php if(isset($teamId)){ echo $teamId; } ?>" />
 							<?php 
 								/*							
-								 * En aquest bloc comprobo si l'usuari actual esta inscrit en el projecte:
+								 * En aquest bloc comprovo si l'usuari actual esta inscrit en el projecte:
 								 * Si no hi está mostro el botó per unir-se i un span buit per un cop unit mostrar el botó a recursos, si ho está mostro el botó re accedir als recursos.
 								*/
 									

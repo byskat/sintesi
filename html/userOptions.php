@@ -120,8 +120,8 @@
 				<div class="optionName">Nom:</div><input id="name" type="text" name="name" value="<?php echo $loggedName ?>"/><br>
 				<div class="optionName">Cognoms:</div><input id="lastName" type="text" name="lastName" value="<?php echo $loggedLastName ?>"/><br>
 				<div class="optionName">email:</div><input id="email" type="text" name="email" value="<?php echo $loggedEmail ?>"/><br>
-				<div class="optionName">Data de naixement:</div><input id="datetimepicker" type="text" name="birthDay" value="<?php echo formatDate('Y-m-d', 'd/m/Y', $loggedBirthday) ?>"/><br>
-				<div class="optionName">Contrassenya nova:</div><input id="pass1" type="password" name="pass1" /><br>
+				<div class="optionName">Naixement:</div><input id="datetimepicker" type="text" name="birthDay" value="<?php echo formatDate('Y-m-d', 'd/m/Y', $loggedBirthday) ?>"/><br>
+				<div class="optionName">Contrassenya:</div><input id="pass1" type="password" name="pass1" /><br>
 				<div class="optionName">Repeteix-la:</div><input id="pass2" type="password" name="pass2" /><br><br>
 				<div class="optionName"></div><input class="redButton" type="submit" name="update" value="Actualitzar" /><br>				
 			</form>						

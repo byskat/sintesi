@@ -286,8 +286,6 @@
 		<div class="commentSection">
 			<form name="form1" method="post" action="add_answer.php" method="POST">
 				<input name="id" type="hidden" id="id" value="<?php echo $id; ?>"></td>
-				<input name="a_name" type="hidden" id="a_name" value="<?php echo "test"; ?>"></td>
-				<input name="a_email" type="hidden" id="a_email" value="<?php echo "test"; ?>"></td>
 				<div class="commentArea">
 					<textarea name="a_answer" id="a_answer" placeholder="comentari" class="paddingBottom" required></textarea>
 				</div>
