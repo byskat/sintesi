@@ -9,9 +9,8 @@
 	$endDate = $_GET['teamEndDate'];	
 	$action = $_GET['action'];
 
-	//Processo la base de dades	
-
-	if($action == "update"){		
+	//Segons la opció que revo per get update o create faig una cosa o una altre.
+	if($action == "update"){
 		
 		$sql = "UPDATE teams SET name = :teamName, endDate = :endDate WHERE id = :teamId";
 		$arr = array(
@@ -22,7 +21,7 @@
 
         executeInsertUpdateQuery($conn, $sql, $arr);
 
-        //Proceso els valors a retornar pel servidor. Aquests valors em permetran actualitzar dinamicament el quadre de la connexio
+        //Proceso els valors a retornar pel servidor. Aquests valors em permetran actualitzar dinamicament el quadre d'equip
 
 		$updateValues = array(
 			"formId" => $formId,
@@ -37,21 +36,20 @@
 
 		$foundInThisProj = false;
 
-		//Comprovo que no es pugui crear un projecte amb el mateix nom
-		$results = executePreparedQuery($conn, "SELECT id FROM teams WHERE name = :teamName", array(':teamName'=>$teamName), false);	
-
+		//Comprovo que no es pugui crear un equip amb el mateix nom.
+		$results = executePreparedQuery($conn, "SELECT id FROM teams WHERE name = :teamName", array(':teamName'=>$teamName), false);
 		if($results != false){
-			//Per tal de que dues conexions diferents puguin tenir un projecte amb el mateix nom. Necesito saver de quina connexio pertany el resultat. Selecciono totes les id_de connexio les cuals continguin aquella id de projecte
-			$ids_proj = executePreparedQuery($conn, "SELECT projects_id FROM `teamsProjects` WHERE teams_id = :teamId", array(':teamId'=>$results->id), true);
+			//Per tal de que dos projectes diferents puguin tenir un equip amb el mateix nom. Necesito saver de quin projecte pertany el resultat. Selecciono totes les id de proejecte les cuals continguin aquella id d¡erquip
+			$ids_proj = executePreparedQuery($conn, "SELECT projects_id FROM teamsprojects WHERE teams_id = :teamId", array(':teamId'=>$results->id), true);
 			//Per cada resultat comprovo si el num de connexio actual es correspon amb algun dels resultats.
-			foreach ($ids_proj as $result) {
+			foreach ($ids_proj as $result) {				
 
 				if($result->projects_id == $projId){
 					$foundInThisProj = true;
 				}
 			}
 		}
-				
+		//Si no es troba cap projecte amb el mateix nom ni s'ha trobat a id d'equip al projecte insereixo l'equip i la connexió del projecte amb equip.		
 		if($results == false || $foundInThisProj == false){
 
 			$sql = "INSERT INTO teams (name, startDate, endDate) VALUES (:teamName, :startDate, :endDate)";                
@@ -62,10 +60,10 @@
 	      	);
 	      	executeInsertUpdateQuery($conn, $sql, $arr);
 
-	      	//Selecciono la ID de la ultima insercio i l'asigno com a ID actual del projecte, Despres faig la connexio
+	      	//Selecciono la ID de l'úlitma insercio i l'asigno com a ID actual del projecte, Despres faig la connexió
 	      	$teamId = $conn->lastInsertId();
 
-	      	$sql = "INSERT INTO teamsProjects (teams_id, projects_id) VALUES (:teamId, :projId)";                
+	      	$sql = "INSERT INTO teamsprojects (teams_id, projects_id) VALUES (:teamId, :projId)";                
 			$arr = array(
 	          ':teamId'=>$teamId,
 	          ':projId'=>$projId

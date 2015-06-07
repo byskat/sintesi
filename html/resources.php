@@ -3,6 +3,10 @@
 	require('./includes/php/userValidation.inc.php');
 	require('./includes/php/functions.inc.php');
 
+	if(!isset($_GET["hiddenTeamId"])){	
+		header('Location: ./login.php');
+	}
+
 ?>
 <!DOCTYPE html>
 <head>
@@ -19,87 +23,37 @@
 	?>	
 
 	<div class="panel">
+
+		<div class="itemHeader">
+			<div class="itemTitle">
+				<h1>Equip <?php echo "#" . $_GET['hiddenTeamId']. " " .$_GET['hiddenTeamName'] ?></h1>
+			</div>
+		</div>
+
 		<div class="itemList">
 
-			<?php
-				
-			?>
+			<div class="itemIcon">
+				<form action="forum/main_forum.php" method="GET">
+					<button class="shadowBox">
+						<input name="teamId" type="hidden" value="<?php echo $_GET['hiddenTeamId'] ?>">
+						<input name="teamName" type="hidden" value="<?php echo $_GET['hiddenTeamName'] ?>">
+						<div class="iconImg"><i class="fa fa-comments"></i></div>
+						<div>Forum</div>
+					</button>
+				</form>
+			</div>
 
 		</div>
+
+		<div class="paddingTop"></div>
+		<form action="teams.php" method="GET">
+			<input name="toTeamsProjId" id="toTeamsProjId" type="hidden" value="<?php echo $_SESSION['toTeamsProjId'] ?>">
+			<input name="toTeamsDesc" id="toTeamsDesc" type="hidden" value="<?php echo $_SESSION['toTeamsDesc'] ?>">
+			<button class="backButton"><i class="fa fa-arrow-left"></i></button>
+		</form>
 	</div>
 	
-	<script>
-		function resizeMenu(){
-			var topMenu = $(window).height()/2-nav.height()/2;
-			$('.panel').width($(window).width()-75);
-			if(topMenu>68){
-				nav.css({top:(topMenu+"px")});
-			} else nav.css({top:(68+"px")});	
-		}
-		//Codi perque el menu aparegui plegat directament sense que es tingui que passar per sobre.
-		//I es salti la transició.
-		function navReset(){
-			nav.addClass('notransition'); 
-			nav.width(62);
-			nav[0].offsetHeight;
-			nav.removeClass('notransition');
-		}
-
-		function navAction(){
-			flag=true;
-			nav = $('.nav');
-			search = $('.nav ul li');
-
-			//Regles per l'entrada i sortida del menu.
-			search.focusout(function(){
-				$(nav).width(62);
-				flag=true;	
-			});
-
-			search.focusin(function(){
-				$(nav).width(200);
-				flag=false;
-			});
-
-			nav.mouseenter(function(){
-				$(this).width(200);		
-			});
-
-			nav.mouseleave(function(){
-				if(flag) $(this).width(62);		
-			});
-		}
-
-		$(document).ready(function(){
-			var flag = true;
-			$('#userBox').click(function(){
-				if(flag){
-					$('.userBox').show();
-					flag=false;
-				} else {
-					$('.userBox').hide();
-					flag=true;
-				}
-			});
-
-
-			$('.blackScreen').click(function(){
-			$(this).hide();
-			}).children().click(function(e) {
-				return false;
-			});
-
-
-			navAction();
-
-			resizeMenu();
-			$(window).resize(function(){
-				resizeMenu();
-			});
-
-			navReset();
-		});
-	</script>
+	<script type="text/javascript" src="./includes/js/functions.inc.js"></script>
 	
 </body>
 </html>

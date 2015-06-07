@@ -1,3 +1,4 @@
+<!-- Include uutilitzat a totes les pàgines on es mostra una notificació a l'usuari -->
 <div class="msgBox">
     <p><?php if(isset($msg) & !empty($msg)){ 
         echo $msg; ?> 

@@ -6,6 +6,9 @@
 	if(!isset($_GET["toTeamsProjId"])){	
 		header('Location: ./login.php');
 	}
+
+	$_SESSION['toTeamsProjId']=$_GET["toTeamsProjId"];
+	$_SESSION['toTeamsDesc']=$_GET['toTeamsDesc'];
 ?>
 <!DOCTYPE html>
 <head>
@@ -22,26 +25,32 @@
 	?>	
 
 	<div class="panel">
+
+		<div class="itemHeader">
+			<div class="itemTitle">
+				<h1>Equips</h1>
+			</div>
+		</div>
+
 		<div class="itemList">
-			<div style="margin-bottom: 20px; padding:10px; width:100%; background-color:#999; color:white; font-weight:bold;">Descripció del projecte: <?php echo $_GET['toTeamsDesc'] ?></div>		
+			<div class="descriptionProject shadowBox"><b>Descripció del projecte:</b> <?php echo $_GET['toTeamsDesc'] ?></div>		
 
 			<?php				
-				
+
 				$idProj = $_GET['toTeamsProjId'];
 				
 				//Obtenc la id de la inscripcio de l'usuari a partir de la id d'usuari
-				$result = executePreparedQuery($conn, "SELECT * FROM inscriptions WHERE users_id = :userId", array(':userId'=>$_SESSION['userID']), false);
-				
+				$result = executePreparedQuery($conn, "SELECT * FROM inscriptions WHERE users_id = :userId", array(':userId'=>$_SESSION['userID']), false);				
 				$idInscription = $result->id;
 				
-				//Seleccionbo tots els projectes els quals la seva ID de conexio es la que revo per POST.
-            	$sql = "SELECT tms.id, tms.name, tms.startDate, tms.endDate FROM teams tms, teamsProjects tp WHERE tms.id = tp.teams_id AND tp.projects_id = :idProj";
+				//Seleccionbo tots els projectes els quals la seva ID de conexio es la que revo per GET.
+            	$sql = "SELECT tms.id, tms.name, tms.startDate, tms.endDate FROM teams tms, teamsprojects tp WHERE tms.id = tp.teams_id AND tp.projects_id = :idProj";
             	$arr = array(':idProj'=>$idProj);
             	$results = executePreparedQuery($conn, $sql, $arr, true);
 				
 			    //Comprovo que la consulta hagi tornat com a minim un resultat
 			    if($results != false){
-			    	
+			    	//Per cada resultat trobat obtinc totes les seves dades i la genero per mosrar-lo.
 				    foreach ($results as $result) {
 
 				    	$teamId = $result->id;
@@ -51,37 +60,44 @@
 
 				    	
 				    	//Miro si l'usuari loguejat esta instrit en l'equip actual
-				    	$userFoundInThisProject = executePreparedQuery($conn, "SELECT * FROM `inscriptionsTeams` WHERE teams_id = :teamId AND inscription_id = :inscription_id", array(':teamId'=>$teamId, 'inscription_id'=>$idInscription), false);
-				    	
-                	
+				    	$userFoundInThisProject = executePreparedQuery($conn, "SELECT * FROM `inscriptionsteams` WHERE teams_id = :teamId AND inscription_id = :inscription_id", array(':teamId'=>$teamId, 'inscription_id'=>$idInscription), false);
 			?>
 			    	<div class="item shadowBox">		    		
 				    	
 				    	<form id="<?php echo $teamId?>" action="">
-
+							<!-- Guardo en camps ocults la informació que vull pasar a Javascript un cop premi el botó de mostrar la configuració d'aquest equip -->
 				    		<input id="hiddenIdProj" type="hidden" name="hiddenIdProj" value="<?php echo $teamId ?>" />
 							<input id="hiddenName" type="hidden" name="hiddenName" value="<?php echo $teamName ?>" />
 							<input id="hiddenStartDate" type="hidden" name="hiddenStartDate" value="<?php echo $startDate ?>" />
-							<input id="hiddenEndDate" type="hidden" name="hiddenEndDate" value="<?php echo $endDate ?>" />							
+							<input id="hiddenEndDate" type="hidden" name="hiddenEndDate" value="<?php echo $endDate ?>" />
+							<input id="hiddenTeamId" type="hidden" name="hiddenTeamId" value="<?php if(isset($teamId)){ echo $teamId; } ?>" />							
 							
 							<div class="headerItem">
-								<h2 id="teamName"> <?php echo $teamName?> </h2>								
+								<h2 id="teamName"> <?php echo $teamName?> </h2>	
+								<!-- Només mostro l'opció de de configurar equips si és professor -->							
 								<?php if($_SESSION['role'] == 2){ ?>
-								<input id="settings" type="button" onClick="openConfig($(this.form),event)" class="settings" value="&#xf013;">
+									<input id="settings" type="button" onClick="openConfig($(this.form),event)" class="settings" value="&#xf013;">
 								<?php } ?>							 
 							</div>
 						</form>					
 						
 						<form id="join" action="resources.php" method="GET">
 
-							<input id="hiddenTeamId" type="hidden" name="hiddenTeamId" value="<?php echo $teamId ?>" />
+						
+							<!--Per si no hi ha cap team llogicament no es pot setejar el valor de teamId per tant ho controlo-->	
+														
 							<input id="hiddenInscriptionId" type="hidden" name="hiddenInscriptionId" value="<?php echo $idInscription ?>" />
-							
+							<input id="hiddenTeamName" type="hidden" name="hiddenTeamName" value="<?php if(isset($teamId)){ echo $teamName; } ?>" />
+							<input id="hiddenTeamId" type="hidden" name="hiddenTeamId" value="<?php if(isset($teamId)){ echo $teamId; } ?>" />
 							<?php 
+								/*							
+								 * En aquest bloc comprobo si l'usuari actual esta inscrit en el projecte:
+								 * Si no hi está mostro el botó per unir-se i un span buit per un cop unit mostrar el botó a recursos, si ho está mostro el botó re accedir als recursos.
+								*/
+									
 								if($userFoundInThisProject == false){
 									echo("<input id=\"join\" type=\"button\" onClick=\"joinTeam($(this.form),event)\" value=\"Uneix-te\">");
 									echo("<span id =\"goin\"></span>");
-									//echo("<input id=\"toResources\" type=\"submit\" style=\"display:none\" value=\"Entra\">");
 								}else{
 									echo("<input id=\"toResources\" type=\"submit\" value=\"Entra\">");
 								}
@@ -93,21 +109,30 @@
 
 		    <?php }} ?>			
 
-		</div>
-		<?php if($_SESSION['role'] == 2){ ?>
-		<div class="itemAdd shadowBox">
-			<button onclick="createNew()">Afegir nou<br><i class="fa fa-plus"></i></button>
-		</div>
-		<?php } ?>
-	</div>
+			<!-- Només mostro l'opció de crear equips si és professor -->
+			<?php if($_SESSION['role'] == 2){ ?>
+				<div class="itemAdd shadowBox">
+					<button onclick="createNew()">Afegir nou<br><i class="fa fa-plus"></i></button>
+				</div>
+			<?php } ?>
 
+		</div>	
+
+		<div class="paddingTop"></div>
+		<form action="projects.php" method="GET">
+			<input name="toProjectsIdConn" id="toProjectsIdConn" type="hidden" value="<?php echo $_SESSION['toProjectsIdConn'] ?>">
+			<button class="backButton"><i class="fa fa-arrow-left"></i></button>
+		</form>
+	</div>
+	
+	<!-- En aquest bloc creo el formulari emergent que surt al modificar i crear un equip -->
 	<div class="blackScreen" style="display:none">
 		<div class="formBox shadowBox" >
 			<form action="">
 				<h3>Edició de l'equip <span id="nameHeader" class="important"></span></h3>
 				
 				<input id="hiddenProjId" type="hidden" name="hiddenProjId" value="<?php echo $idProj ?>" />
-				<input id="hiddenTeamId" type="hidden" name="hiddenTeamId" value="<?php echo $teamId ?>" />
+				<input id="hiddenTeamId" type="hidden" name="hiddenTeamId" value="<?php if(isset($teamId)){ echo $teamId; } ?>" />
 
 				<span class="tag">Nom:</span><input id="nameConfig" name="name" class="tag">
 				<span class="tag">Data inici:</span><input id="startDate" disabled name="startDate" class="tag">
@@ -115,38 +140,26 @@
 				<p class="center"><input type="button" class="redButton" onClick="saveConfig($(this.form),event)" value="enviar"></p>
 			</form>
 		</div>
-	</div>-->
-	
+	</div>
+
+	<script type="text/javascript" src="./includes/js/functions.inc.js"></script>
 	<script>
 		var clickedId = "";
 		var action = "update";
+		var teamId = null;
 
-		function getXMLHTTPRequest(){
-			var req = false;
-
-			try	{
-				req = new XMLHttpRequest();
-			}catch(err1){
-				try{
-					req = new ActiveXObject("Msxm12.XMLHTTP");
-				}catch(err2){
-					try{
-						req = new ActiveXObject("Microsoft.XMLHTTP"); 
-					}catch(err3){
-						req = false;
-					}
-				}
-			}
-			return req;
-		}
-
+		/*
+		 * Aquesta funció  fa una petició a servidor per unir l'usuari connectat al grup solicitat 
+		 * i modificar l'opció unir-se per el botó a recursos. Aquest procés el fa per AJAX.
+		 */
+		
 		function joinTeam(form, event){
 
-			var serialized = ($(form).serializeArray());			
-			var teamId = serialized[0]['value'];
-			var inscriptionId = serialized[1]['value'];			
+			var serialized = ($(form).serializeArray());            
+      var teamId = serialized[2]['value'];
+      var inscriptionId = serialized[0]['value'];
 
-			var url = "/html/includes/php/userJoinAjax.php?&teamId=" + teamId + "&inscriptionId=" + inscriptionId;
+			var url = "/includes/php/userJoinAjax.php?&teamId=" + teamId + "&inscriptionId=" + inscriptionId;
 			var myQuery = getXMLHTTPRequest();
 			
 			myQuery.open("GET", url , true);
@@ -165,7 +178,11 @@
 			}
 		}	
 
-
+		/*
+		 * Aquesta funció obra el formulari de configuració de l'equip clickat amb les seves dades. 
+		 * És aqui on serialitza el formulari i per tant obté la informació continguda en els hidden. 
+		*/
+	
 		function openConfig(form, event){			
 			event.preventDefault();
 			var serialized = ($(form).serializeArray());
@@ -176,6 +193,7 @@
 			$('#nameConfig').val(serialized[1]['value']);			
 			$('#startDate').val(serialized[2]['value']);
 			$('#endDate').val(serialized[3]['value']);
+			teamId = serialized[4]['value'];
 
 			$('.blackScreen').show();
 			
@@ -184,35 +202,39 @@
 		function saveConfig(form, event){
 			event.preventDefault();
 			
-			//Recuperant dades dels formularis per treballar
+			//Recupero les dades dels formularis per treballar amb elles.
 			var serialized = ($(form).serializeArray());
 
 			var projId = serialized[0]['value'];
-			var teamId = serialized[1]['value']
 			var teamName = $('#nameConfig').val();
 			var teamEndDate = $('#endDate').val();			
 
-			//Definint variables per l'ajax
-			var url = "/html/includes/php/teamsAjax.php?&formId=" + clickedId + "&projId=" + projId + "&teamId=" + teamId + "&teamName=" + teamName + "&teamEndDate=" + teamEndDate + "&action=" + action;
+			//Defineixo la url i creo el XMLHTTPRequest.
+			var url = "/includes/php/teamsAjax.php?&formId=" + clickedId + "&projId=" + projId + "&teamId=" + teamId + "&teamName=" + teamName + "&teamEndDate=" + teamEndDate + "&action=" + action;
 			var myQuery = getXMLHTTPRequest();					 		
 
+			//Oculta la finestra de configuració.
 			$('.blackScreen').hide();
-
 					
-			//Comprobo que tot estigui ple
+			//Comprobo que els camps que s'han d'omplir estiguin tots plens.
 			if(teamName.length > 0 && teamEndDate.length > 0){
-				//Comprovo la data
+				//Comprovo que la dafa de inalitzar no sigui incorrecte.
 				if(compareDates(teamEndDate)){					
 
 					myQuery.open("GET", url , true);
 					myQuery.onreadystatechange = responseAjax;		
 					myQuery.send(null);
 				}else{
-					alert("Data incorrecte o connexio caducada (Renova la data)");
+					alert("Data incorrecte o projecte caducat (Renova la data)");
 				}				
 			}else{
 				alert("Falta algun camp");
 			}	
+			
+			/*
+			 * Aquesta funció processa els resultat obtinguts pel servidor.
+			 * En aquest cas faig distincions per si s'actualitza un element o es crea un de nou ja que les respostes seràn diferents.
+			 */
 				
 			function responseAjax(){
 				if(myQuery.readyState == 4){		
@@ -223,12 +245,15 @@
 						if(action == "update"){
 							response = JSON.parse(response);
 						
-							//Actualitzo els camps de les connexions:						
+							//Actualitzo els camps dels equips:						
 							$('form#'+response.formId).find('#teamName').html(response.teamName);
 						}
 
-						//Si el nom existeix al intentar cerear el projecte, torna missatge d'error.
-						//Si no el tira recarega la pagina per mostrar el nou projecte
+						/*
+						 * Si el nom existeix al intentar cerear la connexió, torna missatge d'error.
+						 * Si no el tira recarega la pagina per mostrar el nou projecte.
+						*/
+					
 						if(action == "create" && response.length > 0){
 							alert(myQuery.responseText);
 						}else if(action == "create" && response.length == 0){
@@ -240,31 +265,7 @@
 					}
 				}
 			}
-
-			function compareDates(endDate){
-
-				var arr_endDate = endDate.split("/");
-
-				var todayDate = new Date()
-				var setEndDate = new Date();
-				
-				setEndDate.setDate(arr_endDate[0]);
-				setEndDate.setMonth(arr_endDate[1]);
-				setEndDate.setFullYear(arr_endDate[2]);
-
-				return todayDate < setEndDate;
-			}		
-
-		}
-
-		function createNew(){
-
-			resetNew();
-			action = "create";
-			$('#center').prop('disabled', false);
-
-			$('.blackScreen').show();
-		}
+		}		
 
 		function resetNew(){
 
@@ -274,78 +275,6 @@
 			$('#endDate').val("");			
 		}
 
-		function resizeMenu(){
-			var topMenu = $(window).height()/2-nav.height()/2;
-			$('.panel').width($(window).width()-75);
-			if(topMenu>68){
-				nav.css({top:(topMenu+"px")});
-			} else nav.css({top:(68+"px")});	
-		}
-
-		//Codi perque el menu aparegui plegat directament sense que es tingui que passar per sobre.
-		//I es salti la transició.
-		function navReset(){
-			nav.addClass('notransition'); 
-			nav.width(62);
-			nav[0].offsetHeight;
-			nav.removeClass('notransition');
-		}
-
-		function navAction(){
-			flag=true;
-			nav = $('.nav');
-			search = $('.nav ul li');
-
-			//Regles per l'entrada i sortida del menu.
-			search.focusout(function(){
-				$(nav).width(62);
-				flag=true;	
-			});
-
-			search.focusin(function(){
-				$(nav).width(200);
-				flag=false;
-			});
-
-			nav.mouseenter(function(){
-				$(this).width(200);		
-			});
-
-			nav.mouseleave(function(){
-				if(flag) $(this).width(62);		
-			});
-		}
-
-		$(document).ready(function(){
-			var flag = true;
-			$('#userBox').click(function(){
-				if(flag){
-					$('.userBox').show();
-					flag=false;
-				} else {
-					$('.userBox').hide();
-					flag=true;
-				}
-			});
-
-
-			$('.blackScreen').click(function(){
-			$(this).hide();
-			}).children().click(function(e) {
-				return false;
-			});
-
-
-			navAction();
-
-			resizeMenu();
-			$(window).resize(function(){
-				resizeMenu();
-			});
-
-			navReset();
-		});
-	</script>
-	
+	</script>	
 </body>
 </html>

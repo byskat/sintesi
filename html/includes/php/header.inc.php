@@ -1,3 +1,4 @@
+<!-- Els includes del header que son comuns a tots els arxius -->
 <link rel="stylesheet" type="text/css" href="./includes/css/normalize.css">
 <link rel="stylesheet" type="text/css" href="./includes/css/jquery-ui-1.11.4/jquery-ui.css">
 <link rel="stylesheet" type="text/css" href="./includes/css/style.css" />

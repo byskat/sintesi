@@ -1,8 +1,8 @@
 <?php
-
-require('db.inc.php');
-require('functions.php');
-
+	require('../../includes/php/db.inc.php');
+	require('../includes/php/userValidation.inc.php');
+	require('../includes/php/functions.inc.php');
+	require('functions.php');
 ?>
 
 <!DOCTYPE html>
@@ -11,63 +11,36 @@ require('functions.php');
 <body>
 
 <?php
+	require('../includes/php/topBar.inc.php');
+	require('../includes/php/leftMenu.inc.php');		
 
+//Es comprova que es passa correctament la id, sigui per get o per sessio.
 if(isset($_POST['id'])){
 	$id=$_POST['id'];
 } else {
-	if(isset($_SESSION['id'])) {
+	if(isset($_SESSION['id'])&&isset($_SESSION['teamId'])) {
 		$id = $_SESSION['id'];
+		$teamId = $_SESSION['teamId'];
 	} else {
 		header("Location: main_forum.php");
 	}
 }
 
-session_destroy();
-
-if(isset($_POST['option'])){
-	if($_POST['option']=="delete"){
-		echo "delete";
-	} else {
-		echo "view";
-	}
-}
-
-if(isset($_SESSION['status'])){
-	if($_SESSION['status']){
-		echo "S'ha afegit correctament.";
-	} else {
-		echo "No s'ha afegit correctament.";
-	}
-}
 ?>
 
 <div class="panel">
-
 	<?php
-
-		$open = loadTopic($conn,$id);
-		loadComments($conn,$id,$open);
+		$open = loadTopic($conn,$id,$user);
+		loadComments($conn,$id,$open,$user);
+		//Es comprova que la opció de comentar es troba habilitada.
 		if($open) commentSection($id);
 
 		if(isset($_POST['visit'])){
 			addViewer($conn,$id);
 		}
-
 	?>
-	
 	<a class="backButton" href="main_forum.php"><i class="fa fa-arrow-left"></i></a>
-	
 	</div>
-
-	<script type="text/javascript">
-		$(document).ready(function(){
-			$('.panel').width($(window).width()-75);
-			$(window).resize(function(){
-				$('.panel').width($(window).width()-75);
-			});
-			
-		});
-	</script>
-
+	<script type="text/javascript" src="../includes/js/functions.inc.js"></script>
 </body>
 </html>

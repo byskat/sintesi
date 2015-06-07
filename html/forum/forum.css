@@ -1,24 +1,5 @@
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:400);
-*{
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
-	font-family: 'Open Sans', sans-serif;
-}
-html{
-	height: 100%;
-}
-body{
-	color: #5e5e5e;
-	font: 400 87.5%/1.5em 'Open Sans', sans-serif;
-	background-color: #2C313A;
-	position: relative;
-	height: 100%;
-	overflow-x: hidden; 
-}
-a {
-	color: inherit;
-}
+/*--- Main forum table ---*/
+
 table{
 	width: 100%;
 	border-collapse: collapse;
@@ -47,15 +28,14 @@ tr:not(:first-child):hover{
 	outline: none;
 	transition: background 0.3s ease-in-out;
 }
-/*
-.add{
-	color: rgb(39, 174, 96);
-	transition: background 0.3s ease-in-out;
+
+.userTopicImg{
+	margin-right: 5px;
+	width: 30px;
+	height: 30px;
+	border-radius: 99em;
+	vertical-align: middle;
 }
-.add:hover{
-	background-color: rgb(46, 204, 113) !important;
-}
-*/
 .enter {
 	background-color: rgb(3, 126, 140);
 }
@@ -68,6 +48,9 @@ tr:not(:first-child):hover{
 
 .addTopic{
 	display: block;
+	background-color: inherit;
+	outline: 0;
+	border: 0;
 	width: 100%;
 	height: 100%;
 	font-size: 1.5em;
@@ -132,6 +115,8 @@ tr:not(:first-child):hover{
 	float:left;
 	width: 20%;
 	min-height: 60px;
+	min-width: 300px;
+	margin-bottom: 10px;
 	display: inline-block;
 }
 
@@ -154,35 +139,25 @@ tr:not(:first-child):hover{
 	border-left: 4px solid rgb(192,192,192);
 	padding: 0 20px;
 	float: left;
-	width: 80%;
+	max-width: 80%;
 	min-height: 100px;
+	min-width: 250px;
 }
 
 .topicMessage p{
 	white-space:pre-wrap;
 }
 
-.backButton{
-	position: absolute;
-	width: 50px;
-	height: 50px;
-	bottom: 20px;
-	right: 20px;
-	background-color: rgb(192,192,192);
-	line-height: 48px;
-	text-align: center;
-	font-size: 2em;
-}
-
 /* Comment "textarea" section */
 
 .commentSection{
-	width: 70%;
+	width: auto;
+	min-width: 400px;
 	float:left;
 }
 
 .commentArea{
-	width: 50%;
+	width: 350px;
 	float: left;
 
 }
@@ -200,7 +175,7 @@ tr:not(:first-child):hover{
 }
 
 .commentOptions{
-	width: 5%;
+	width: 50px;
 	max-width: 50px;
 	float:left;
 }
@@ -230,9 +205,7 @@ tr:not(:first-child):hover{
 	margin-bottom: 20px;
 	padding: 10px;
 	outline: 0;
-
 }
-
 
 /* ------ RESET D'ESTILS ORIGINALS ------ */
 .panel{
@@ -244,11 +217,77 @@ tr:not(:first-child):hover{
 	border-left: 4px solid rgb(242, 76, 39) !important;
 }
 
+/* ---- Media queries ----*/
 
-/* ------ HELPERS ------ */
+@media 
+only screen and (max-width: 831px){
+.topicUser{
+		width: auto;
+		min-width: 0;
+	}
+}
 
-.paddingBottom{margin-bottom: 70px;}
+@media 
+only screen and (max-width: 760px),
+(min-device-width: 768px) and (max-device-width: 1024px)  {
 
-.allHeight{height: 100px !important;}
-.bgGreen{background-color: rgb(39, 174, 96);}
-.bgRed{background-color: rgb(234, 97, 83);}
+	.paddingTop{
+		padding: 0 !important;
+	}
+
+	.centerMedia{
+		text-align: right !important;
+	}
+
+	.center {
+		text-align: right !important;
+	}
+
+	.options {
+		width: 100%;
+		height: 65px;
+	}
+
+	table, thead, tbody, th, td, tr { 
+		display: block; 
+	}
+	
+	th{
+		display: none;
+	}
+
+	thead tr { 
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+	
+	tr { border: 1px solid #ccc; }
+	
+	td { 
+		border: none;
+		border-bottom: 1px solid #eee; 
+		position: relative;
+		padding-left: 50%; 
+	}
+	
+	td:before { 
+		position: absolute;
+		top: 15px;
+		left: 6px;
+		width: 45%; 
+		text-align: left;
+		font-weight: bold;
+
+		padding-right: 10px; 
+		white-space: nowrap;
+	}
+
+	td:nth-of-type(1):before { content: "#"; }
+	td:nth-of-type(2):before { content: "Tema"; }
+	td:nth-of-type(3):before { content: "Usuari"; }
+	td:nth-of-type(4):before { content: "Visites"; }
+	td:nth-of-type(5):before { content: "Respostes"; }
+	td:nth-of-type(6):before { content: "Data/Hora"; }
+
+}

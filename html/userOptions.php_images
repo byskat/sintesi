@@ -1,0 +1,243 @@
+<?php
+	require('../includes/php/db.inc.php');
+	require('./includes/php/userValidation.inc.php');
+	require('./includes/php/functions.inc.php');
+
+	if(!isset($_SESSION['userID'])){	
+		header('Location: ./login.php');
+	}
+
+?>
+
+<?php
+
+	$result = executePreparedQuery($conn, "SELECT * FROM users WHERE id = :userId", array( ':userId'=>$_SESSION['userID']), false);
+	$loggedName = $result->name;
+	$loggedLastName = $result->lastName;
+	$loggedBirthday = $result->birthday;	
+	$loggedEmail = $result->email;
+
+	$upload = true;
+
+
+	if(isset($_POST['update'])){
+
+		$name = $_POST['name'];
+		$lastName = $_POST['lastName'];
+		$email = $_POST['email'];
+		$birthday = $_POST['birthDay'];
+		$pass1 = $_POST['pass1'];
+		$pass2 = $_POST['pass2'];
+
+		$response = "Actualitzat correctament";
+
+		$arr = array(':name'=>strip_tags(trim($name)),
+                     ':lastName'=>strip_tags(trim($lastName)),
+                     ':email'=>strip_tags(trim($email)),
+                     ':birthday'=>strip_tags(trim(formatDate('d/m/Y', 'Y-m-d', $birthday))),
+                     ':pass'=>strip_tags(trim(MD5($pass1))),
+                     ':userId'=>$_SESSION['userID']
+                    );
+		
+		$campsSql = "name = :name, lastName = :lastName, email = :email, birthday = :birthday, password = :pass";
+		//$sql = "UPDATE users SET" . $campsSql . "WHERE id = :userId";
+
+		//Hi haura dos modes d'update 
+
+		 if (!empty($name) && !empty($lastName) && !empty($birthday) && !empty($email) ){
+		 	
+		 	//Si els dos caps de contrassenya estan buits trec de l'array de update el camp pass, si no coincideixen ho mostro.
+		 		 		
+		 	if($pass1 != $pass2){
+		 		$response = "Els passwords no coincideicen";
+		 	}else if(empty($pass1) && empty($pass2) || $pass1 == $pass2){
+		 		
+		 		if(empty($pass1) && empty($pass2)){
+		 			unset($arr[':pass']);
+		 			$campsSql = "name = :name, lastName = :lastName, email = :email, birthday = :birthday";
+		 		}
+
+		 		//Comprobar que l'email no estigui repetit
+		 		$result = executePreparedQuery($conn, "SELECT * FROM users WHERE email = :email", array(':email'=>$email), false);
+		 		//Si no torna cap resultat o el mail es el mateix que el de l'usuari loguejat
+                if($result == false || $result->email == $loggedEmail){
+                	//comprovar data no mes nova que actual                	
+                	
+                	if(checkBirthday($birthday) == true){
+
+                		//Miro si esta setejada la imatge
+                		if(empty($_FILES["fileToUpload"]["name"]) == false){
+
+							//Retorna un array amb el missatge, num insercio (1 correcte 0 incorrecte) i el nom del fitxer
+							$uploadResult = uploadImage("./images/uploads/profileImages/");
+
+							if($uploadResult[1] == 1){
+								$arr[':profileImg'] = $uploadResult[2];
+								$campsSql .= ", :profileImg =" . $uploadResult[2];
+								
+							}else{
+								$response = $uploadResult[0];
+								$upload = false;
+							}
+						}                		
+
+                	}else{
+                		$response = "La data no es correcte";
+                		$upload = false;
+                	}
+
+                }else{
+                	$response = "El mail ja existeix";
+                	$upload = false;
+                }
+		 	}	 	
+		 	
+		 }else{
+		 	$response = "Has deixat algun camp buit";
+		 	$upload = false;
+		 }
+
+		if($upload == true){
+
+			executeInsertUpdateQuery($conn, "UPDATE users SET" . $campsSql . " WHERE id = :userId", $arr);
+
+      		//Carrego les noves dades per mosrtar-les
+    		$result = executePreparedQuery($conn, "SELECT * FROM users WHERE id = :userId", array( ':userId'=>$_SESSION['userID']), false);
+			$loggedName = $result->name;
+			$loggedLastName = $result->lastName;
+			$loggedBirthday = $result->birthday;	
+			$loggedEmail = $result->email;
+		}
+	}
+
+
+		
+?>
+
+
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Equips</title>        
+    <?php require('./includes/php/header.inc.php'); ?>
+</head>
+<body>
+
+	<?php
+		require('./includes/php/topBar.inc.php');
+		require('./includes/php/leftMenu.inc.php');		
+	?>	
+
+	<div class="panel">
+		<div class="itemList">
+
+
+			<h1>
+				Usuari: <?php echo $_SESSION['username'] ?><br><br>
+				Categoria: <?php if($_SESSION['role'] == 1){ echo "Alumne"; }else{ echo "Professor"; }?><br>
+			</h1>
+			
+			<h2>MODIFICA LES DADES:</h2> <br>
+			
+			<form action="" method="POST" enctype="multipart/form-data">
+				<b>Nom:</b> <input id="name" type="text" name="name" value="<?php echo $loggedName ?>"/><br>
+				<b>Cognoms:</b> <input id="lastName" type="text" name="lastName" value="<?php echo $loggedLastName ?>"/><br>
+				<b>email:</b> <input id="email" type="text" name="email" value="<?php echo $loggedEmail ?>"/><br>
+				<b>Data de naixement:</b> <input id="datetimepicker" type="text" name="birthDay" value="<?php echo formatDate('Y-m-d', 'd/m/Y', $loggedBirthday) ?>"/><br>
+				<b>Contrassenya nova:</b> <input id="pass1" type="password" name="pass1" /><br>
+				<b>Repeteix-la:</b> <input id="pass2" type="password" name="pass2" /><br><br>
+				<b>Imatge de perfil: </b><input type="file" name="fileToUpload" id="fileToUpload"><br>
+
+				<input class="redButton" type="submit" name="update" value="Actualitzar" /><br>				
+			</form>						
+
+			<span id="notification"><?php if(isset($response)) { echo $response; } ?></span>
+
+		</div>
+	</div>
+
+
+	
+	<script>
+
+		jQuery('#datetimepicker').datetimepicker({
+		    timepicker:false,
+		    format:'d/m/Y',
+		    lang:'ca'
+		});
+
+		function resizeMenu(){
+			var topMenu = $(window).height()/2-nav.height()/2;
+			$('.panel').width($(window).width()-75);
+			if(topMenu>68){
+				nav.css({top:(topMenu+"px")});
+			} else nav.css({top:(68+"px")});	
+		}
+		//Codi perque el menu aparegui plegat directament sense que es tingui que passar per sobre.
+		//I es salti la transició.
+		function navReset(){
+			nav.addClass('notransition'); 
+			nav.width(62);
+			nav[0].offsetHeight;
+			nav.removeClass('notransition');
+		}
+
+		function navAction(){
+			flag=true;
+			nav = $('.nav');
+			search = $('.nav ul li');
+
+			//Regles per l'entrada i sortida del menu.
+			search.focusout(function(){
+				$(nav).width(62);
+				flag=true;	
+			});
+
+			search.focusin(function(){
+				$(nav).width(200);
+				flag=false;
+			});
+
+			nav.mouseenter(function(){
+				$(this).width(200);		
+			});
+
+			nav.mouseleave(function(){
+				if(flag) $(this).width(62);		
+			});
+		}
+
+		$(document).ready(function(){
+			var flag = true;
+			$('#userBox').click(function(){
+				if(flag){
+					$('.userBox').show();
+					flag=false;
+				} else {
+					$('.userBox').hide();
+					flag=true;
+				}
+			});
+
+
+			$('.blackScreen').click(function(){
+			$(this).hide();
+			}).children().click(function(e) {
+				return false;
+			});
+
+
+			navAction();
+
+			resizeMenu();
+			$(window).resize(function(){
+				resizeMenu();
+			});
+
+			navReset();
+		});
+	</script>
+	
+</body>
+</html>

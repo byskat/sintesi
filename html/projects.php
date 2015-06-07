@@ -6,6 +6,8 @@
 	if(!isset($_GET["toProjectsIdConn"])){	
 		header('Location: ./login.php');
 	}
+
+	$_SESSION["toProjectsIdConn"]=$_GET["toProjectsIdConn"];
 ?>
 <!DOCTYPE html>
 <head>
@@ -22,35 +24,37 @@
 	?>	
 
 	<div class="panel">
+		<div class="itemHeader">
+			<div class="itemTitle">
+				<h1>Projectes</h1>
+			</div>
+		</div>
 		<div class="itemList">		
 
 			<?php				
 				
 				$idConnection = $_GET['toProjectsIdConn'];				
 				
-				//Seleccionbo tots els projectes els quals la seva ID de conexio es la que revo per POST.
-				
-            	$sql = "SELECT proj.id, proj.name, proj.startDate, proj.endDate, proj.description, proj.outdated FROM projects proj, connectionsProjects cp WHERE proj.id = cp.projects_id AND cp.connections_id = :idConnection";
+				//Seleccionbo tots els projectes els quals la seva ID de conexio es la que revo per POST.				
+            	$sql = "SELECT proj.id, proj.name, proj.startDate, proj.endDate, proj.description, proj.outdated FROM projects proj, connectionsprojects cp WHERE proj.id = cp.projects_id AND cp.connections_id = :idConnection";
             	$arr = array(':idConnection'=>$idConnection);
             	$results = executePreparedQuery($conn, $sql, $arr, true);
 				
 			    //Comprovo que la consulta hagi tornat com a minim un resultat
 			    if($results != false){
-			    	
+			    	//Per cada resultat trobat obtinc totes les seves dades i la genero per mosrar-lo
 				    foreach ($results as $result) {
-				    	
 				    	$projId = $result->id;
 				    	$projName = $result->name;
 				    	$startDate = formatDate('Y-m-d', 'd/m/Y', $result->startDate);
 				    	$endDate = formatDate('Y-m-d', 'd/m/Y', $result->endDate);
 				    	$projDescription = $result->description;
-                		$outdated = $result->outdated;
-
-			?>
+              			$outdated = $result->outdated;
+						?>
 			    	<div class="item shadowBox">
 				    	
 				    	<form id="<?php echo $projId?>" action="">
-
+							<!-- Guardo en camps ocults la informació que vull pasar a Javascript un cop premi el botó de mostrar la configuració d'aquest projecte -->
 				    		<input id="hiddenIdProj" type="hidden" name="hiddenIdProj" value="<?php echo $projId ?>" />
 							<input id="hiddenName" type="hidden" name="hiddenName" value="<?php echo $projName ?>" />
 							<input id="hiddenStartDate" type="hidden" name="hiddenStartDate" value="<?php echo $startDate ?>" />
@@ -60,7 +64,7 @@
 							<div class="headerItem">
 								<h2 id="projectName"> <?php echo $projName?> </h2>								
 								<?php if($_SESSION['role'] == 2){ ?>
-								<input id="settings" type="button" onClick="openConfig($(this.form),event)" class="settings" value="&#xf013;">
+									<input id="settings" type="button" onClick="openConfig($(this.form),event)" class="settings" value="&#xf013;">
 								<?php } ?>							 
 							</div>
 
@@ -70,40 +74,49 @@
 							<input id="toTeamsDesc" type="hidden" name="toTeamsDesc" value="<?php echo $projDescription ?>" />
 
 							<?php 
-							
-							if(checkOutdated( formatDate('d/m/Y', 'Y-m-d', $endDate) )){
-								executeInsertUpdateQuery($conn, "UPDATE projects SET outdated = 1 WHERE id = :projId ", array(':projId'=>$projId) );
-							}					
-							
-							if($outdated == 0){
-								echo("<input id=\"outdatedBtn\" type=\"submit\" value=\"Teams\">");
-							}else{
-								echo("<span id=\"updated\"> </span>");
-								echo("<div id=\"outdated\">Caducat</div>");
-							}
-						?>
-
-						
+								/*							
+								 * En aquest bloc comprobo que el projecte no estigui caducat:
+								 * mostro l'enllaç a equips si no ho está i si ho está mostro un missatge caducat i deixo un 
+								 * span buit on posteriorment, un cop allargada la data, mostraré el botó a equips.
+								*/	
+								if(checkOutdated( formatDate('d/m/Y', 'Y-m-d', $endDate) )){
+									executeInsertUpdateQuery($conn, "UPDATE projects SET outdated = 1 WHERE id = :projId ", array(':projId'=>$projId) );
+								}					
+								
+								if($outdated == 0){
+									echo("<input class=\"itemBottom\" id=\"outdatedBtn\" type=\"submit\" value=\"Equips\">");
+								}else{
+									echo("<span class=\"itemBottom\" id=\"updated\"> </span>");
+									echo("<div class=\"itemBottom\" id=\"outdated\">Caducat</div>");
+								}
+							?>						
 						</form>
 					</div>			    
 
-		    <?php }} ?>			
+		    <?php }} ?>
 
+			<!-- Només mostro l'opció de de crear connexións si és professor -->
+		    <?php if($_SESSION['role'] == 2){ ?>
+				<div class="itemAdd shadowBox">
+					<button onclick="createNew()">Afegir nou<br><i class="fa fa-plus"></i></button>
+				</div>
+			<?php } ?>
 		</div>
-		<?php if($_SESSION['role'] == 2){ ?>
-		<div class="itemAdd shadowBox">
-			<button onclick="createNew()">Afegir nou<br><i class="fa fa-plus"></i></button>
-		</div>
-		<?php } ?>
+
+		<div class="paddingTop"></div>
+		<form action="connections.php" method="GET">
+			<button class="backButton"><i class="fa fa-arrow-left"></i></button>
+		</form>
 	</div>
-
+	
+	<!-- En aquest bloc creo el formulari emergent que surt al modificar i crear un projecte -->
 	<div class="blackScreen" style="display:none">
 		<div class="formBox shadowBox" >
 			<form action="">
 				<h3>Edició del projecte <span id="nameHeader" class="important"></span></h3>
 				
-				<input id="hiddenConnId" type="hidden" name="hiddenConnId" value="<?php echo $idConnection ?>" />
-				<input id="hiddenProjId" type="hidden" name="hiddenProjId" value="<?php echo $projId ?>" />
+				<input id="hiddenConnId" type="hidden" name="hiddenConnId" value="<?php if(isset($idConnection)){ echo $idConnection; } ?>" />
+				<input id="hiddenProjId" type="hidden" name="hiddenProjId" value="<?php if(isset($projId)){ echo $projId; } ?>" />
 
 				<span class="tag">Nom:</span><input id="nameConfig" name="name" class="tag">
 				<span class="tag">Data inici:</span><input id="startDate" disabled name="startDate" class="tag">
@@ -112,32 +125,18 @@
 				<p class="center"><input type="button" class="redButton" onClick="saveConfig($(this.form),event)" value="enviar"></p>
 			</form>
 		</div>
-	</div>-->
+	</div>
 	
+	<script type="text/javascript" src="./includes/js/functions.inc.js"></script>
 	<script>
 		var clickedId = "";
 		var action = "update";
 
-		function getXMLHTTPRequest(){
-			var req = false;
-
-			try	{
-				req = new XMLHttpRequest();
-			}catch(err1){
-				try{
-					req = new ActiveXObject("Msxm12.XMLHTTP");
-				}catch(err2){
-					try{
-						req = new ActiveXObject("Microsoft.XMLHTTP"); 
-					}catch(err3){
-						req = false;
-					}
-				}
-			}
-			return req;
-		}	
-
-
+		/*
+		 * Aquesta funció obra el formulari de configuració del projecte clickat amb les seves dades. 
+		 * És aqui on serialitza el formulari i per tant obté la informació continguda en els hidden. 
+		*/
+	
 		function openConfig(form, event){			
 			event.preventDefault();
 			var serialized = ($(form).serializeArray());
@@ -154,30 +153,36 @@
 			
 		}
 
+		/*
+		 * Aquesta funció guarda canvis en el projecte, ja sigui crear un de nou o modificar una existent.
+		 * Per evitar recarregar la pàgina sempre que és possible i millorar la fluidesa de l'usuari, fa aquest
+		 * procés per AJAX.
+		*/
+
 		function saveConfig(form, event){
 			event.preventDefault();
 			
-			//Recuperant dades dels formularis per treballar
+			//Recupero les dades dels formularis per treballar amb elles.
 			var serialized = ($(form).serializeArray());
-
 			var idConn = serialized[0]['value'];
 			var idProj = serialized[1]['value'];
 			var projName = $('#nameConfig').val();
 			var projEndDate = $('#endDate').val();
 			var projDesc = $('#projDesc').val();				
 
-			//Definint variables per l'ajax
-			var url = "/html/includes/php/projectsAjax.php?&formId=" + clickedId + "&idConn=" + idConn + "&idProj=" + idProj + "&projName=" + projName + "&projEndDate=" + projEndDate + "&projDesc=" + projDesc + "&action=" + action;
+			//Defineixo la url i creo el XMLHTTPRequest.
+			var url = "includes/php/projectsAjax.php?&idConn=" + idConn + "&idProj=" + clickedId + "&projName=" + projName + "&projEndDate=" + projEndDate + "&projDesc=" + projDesc + "&action=" + action;
 			var myQuery = getXMLHTTPRequest();					 		
 
+			//Oculta la finestra de configuració.
 			$('.blackScreen').hide();
 
 					
-			//Comprobo que tot estigui ple
+			//Comprobo que els camps que s0han d'omplir estiguin tots plens.
 			if(projName.length > 0 && projEndDate.length > 0 && projDesc.length > 0){
-				//Comprovo la data
+				//Comprovo que la dafa de inalitzar no sigui incorrecte.
 				if(compareDates(projEndDate)){					
-
+					// Si tot és correcte faig la petició al servidor.
 					myQuery.open("GET", url , true);
 					myQuery.onreadystatechange = responseAjax;		
 					myQuery.send(null);
@@ -186,7 +191,12 @@
 				}				
 			}else{
 				alert("Falta algun camp");
-			}	
+			}
+
+			/*
+			 * Aquesta funció processa els resultat obtinguts pel servidor.
+			 * En aquest cas faig distincions per si s'actualitza un element o es crea un de nou ja que les respostes seràn diferents.
+			 */
 				
 			function responseAjax(){
 				if(myQuery.readyState == 4){		
@@ -196,19 +206,22 @@
 						
 						if(action == "update"){
 							response = JSON.parse(response);
-						
 							//Actualitzo els camps de les connexions:						
-							$('form#'+response.formId).find('#projectName').html(response.projName);
+							$('form#'+response.projId).find('#projectName').html(response.projName);
 
 							//Si updateOutdated = true actualitzo l'estat de caducitat.
-							if(response.outdated == true){
+							console.log(response.procesed);
+							if(response.procesed == true){	
 								$('#outdated').hide();
-								document.getElementById('updated').innerHTML = "<input id=\"outdatedBtn\" type=\"submit\" value=\"Teams\">";				
+								document.getElementById("updated").innerHTML = "<input id=\"outdatedBtn\" type=\"submit\" value=\"Teams\">";				
 							}
 						}
 
-						//Si el nom existeix al intentar cerear el projecte, torna missatge d'error.
-						//Si no el tira recarega la pagina per mostrar el nou projecte
+						/*
+						 * Si el nom existeix al intentar cerear el projecte, torna missatge d'error.
+						 * Si no el tira, recarega la pagina per mostrar el nou projecte.
+						*/
+					
 						if(action == "create" && response.length > 0){
 							alert(myQuery.responseText);
 						}else if(action == "create" && response.length == 0){
@@ -222,30 +235,6 @@
 					}
 				}
 			}
-
-			function compareDates(endDate){
-
-				var arr_endDate = endDate.split("/");
-
-				var todayDate = new Date()
-				var setEndDate = new Date();
-				
-				setEndDate.setDate(arr_endDate[0]);
-				setEndDate.setMonth(arr_endDate[1]);
-				setEndDate.setFullYear(arr_endDate[2]);
-
-				return todayDate < setEndDate;
-			}		
-
-		}
-
-		function createNew(){
-
-			resetNew();
-			action = "create";
-			$('#center').prop('disabled', false);
-
-			$('.blackScreen').show();
 		}
 
 		function resetNew(){
@@ -255,79 +244,6 @@
 			$('#endDate').val("");
 			$('#projDesc').val("");			
 		}
-
-		function resizeMenu(){
-			var topMenu = $(window).height()/2-nav.height()/2;
-			$('.panel').width($(window).width()-75);
-			if(topMenu>68){
-				nav.css({top:(topMenu+"px")});
-			} else nav.css({top:(68+"px")});	
-		}
-
-		//Codi perque el menu aparegui plegat directament sense que es tingui que passar per sobre.
-		//I es salti la transició.
-		function navReset(){
-			nav.addClass('notransition'); 
-			nav.width(62);
-			nav[0].offsetHeight;
-			nav.removeClass('notransition');
-		}
-
-		function navAction(){
-			flag=true;
-			nav = $('.nav');
-			search = $('.nav ul li');
-
-			//Regles per l'entrada i sortida del menu.
-			search.focusout(function(){
-				$(nav).width(62);
-				flag=true;	
-			});
-
-			search.focusin(function(){
-				$(nav).width(200);
-				flag=false;
-			});
-
-			nav.mouseenter(function(){
-				$(this).width(200);		
-			});
-
-			nav.mouseleave(function(){
-				if(flag) $(this).width(62);		
-			});
-		}
-
-		$(document).ready(function(){
-			var flag = true;
-			$('#userBox').click(function(){
-				if(flag){
-					$('.userBox').show();
-					flag=false;
-				} else {
-					$('.userBox').hide();
-					flag=true;
-				}
-			});
-
-
-			$('.blackScreen').click(function(){
-			$(this).hide();
-			}).children().click(function(e) {
-				return false;
-			});
-
-
-			navAction();
-
-			resizeMenu();
-			$(window).resize(function(){
-				resizeMenu();
-			});
-
-			navReset();
-		});
-	</script>
-	
+	</script>	
 </body>
 </html>
