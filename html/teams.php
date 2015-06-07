@@ -81,30 +81,27 @@
 							</div>
 						</form>					
 						
-						<form id="join" action="resources.php" method="GET">
-
-						
-							<!--Per si no hi ha cap team llogicament no es pot setejar el valor de teamId per tant ho controlo-->	
-														
-							<input id="hiddenInscriptionId" type="hidden" name="hiddenInscriptionId" value="<?php echo $idInscription ?>" />
-							<input id="hiddenTeamName" type="hidden" name="hiddenTeamName" value="<?php if(isset($teamName)){ echo $teamName; } ?>" />
-							<input id="hiddenTeamId" type="hidden" name="hiddenTeamId" value="<?php if(isset($teamId)){ echo $teamId; } ?>" />
-							<?php 
-								/*							
-								 * En aquest bloc comprovo si l'usuari actual esta inscrit en el projecte:
-								 * Si no hi está mostro el botó per unir-se i un span buit per un cop unit mostrar el botó a recursos, si ho está mostro el botó re accedir als recursos.
-								*/
-									
-								if($userFoundInThisProject == false){
-									echo("<input id=\"join\" type=\"button\" onClick=\"joinTeam($(this.form),event)\" value=\"Uneix-te\">");
-									echo("<span id =\"goin\"></span>");
-								}else{
-									echo("<input id=\"toResources\" type=\"submit\" value=\"Entra\">");
-								}
-							?>
-							
+						<form id="join" action="resources.php" method="GET">   
+						    <!--Per si no hi ha cap team llogicament no es pot setejar el valor de teamId per tant ho controlo-->    
+						                                
+						    <input id="hiddenInscriptionId" type="hidden" name="hiddenInscriptionId" value="<?php echo $idInscription ?>" />
+						    <input id="hiddenTeamName" type="hidden" name="hiddenTeamName" value="<?php if(isset($teamName)){ echo $teamName; } ?>" />
+						    <input id="hiddenTeamId1" type="hidden" name="hiddenTeamId1" value="<?php if(isset($teamId)){ echo $teamId; } ?>" />
+						    <?php 
+						        /*                            
+						         * En aquest bloc comprobo si l'usuari actual esta inscrit en el projecte:
+						         * Si no hi está mostro el botó per unir-se i un span buit per un cop unit mostrar el botó a recursos, si ho está mostro el botó re accedir als recursos.
+						        */
+						            
+						        if($userFoundInThisProject == false){
+						            echo("<input id=\"join\" type=\"button\" onClick=\"joinTeam($(this.form),event)\" value=\"Uneix-te\">");
+						            echo("<span id =\"goin\"></span>");
+						        }else{
+						            echo("<input id=\"toResources\" type=\"submit\" value=\"Entra\">");
+						        }
+						    ?>
 						</form>
-						
+
 					</div>			    
 
 		    <?php }} ?>			
@@ -155,28 +152,31 @@
 		
 		function joinTeam(form, event){
 
-			var serialized = ($(form).serializeArray());            
+      var serialized = ($(form).serializeArray());            
       var teamId = serialized[2]['value'];
       var inscriptionId = serialized[0]['value'];
 
-			var url = "/includes/php/userJoinAjax.php?&teamId=" + teamId + "&inscriptionId=" + inscriptionId;
-			var myQuery = getXMLHTTPRequest();
-			
-			myQuery.open("GET", url , true);
-			myQuery.onreadystatechange = responseAjax;		
-			myQuery.send(null);
+      var url = "/includes/php/userJoinAjax.php?&teamId=" + teamId + "&inscriptionId=" + inscriptionId;
+      var myQuery = getXMLHTTPRequest();
+      
+      myQuery.open("GET", url , true);
+      myQuery.onreadystatechange = responseAjax;        
+      myQuery.send(null);
 
-			function responseAjax(){
-				if(myQuery.readyState == 4){		
-					if(myQuery.status == 200){
-						document.getElementById('goin').innerHTML = "<input id=\"toResources\" type=\"submit\" style=\"display:none\" value=\"Entra\">";
-						$('#toResources').click();						
-					}else{
-						alert("Error " + myQuery.status);
-					}
-				}
-			}
-		}	
+      function responseAjax(){
+        if(myQuery.readyState == 4){        
+            if(myQuery.status == 200){
+
+                location.reload();
+                document.getElementById('"hiddenTeamId1"').value = teamId;
+                document.getElementById('goin').innerHTML = "<input id=\"toResources\" type=\"submit\" style=\"display:none\" value=\"Entra\">";
+                $('#toResources').click();                        
+            }else{
+                alert("Error " + myQuery.status);
+            }
+        }
+      }
+  	}   
 
 		/*
 		 * Aquesta funció obra el formulari de configuració de l'equip clickat amb les seves dades. 
