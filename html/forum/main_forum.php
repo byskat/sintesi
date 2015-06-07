@@ -42,7 +42,7 @@
 		?>
 		<div class="paddingTop"></div>
 		<form action="../resources.php" method="GET">
-			<input name="hiddenTeamId" id="hiddenTeamId" type="hidden" value="<?php echo $teamId; ?>">
+			<input name="hiddenTeamId1" id="hiddenTeamId" type="hidden" value="<?php echo $teamId; ?>">
 			<input name="hiddenTeamName" id="hiddenTeamName" type="hidden" value="<?php echo $teamName ?>">
 			<button class="backButton"><i class="fa fa-arrow-left"></i></button>
 		</form>
