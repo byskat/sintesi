@@ -466,6 +466,11 @@ div.item input#outdatedBtn, div.item input#join, div.item input#toResources{
 	background-color: inherit;
 }
 
+div.item input#join{
+	background-color: rgba(46, 204, 113,.7);
+	color: white;
+}
+
 input.settings{
 	height: 100%;
 	top: 0;
@@ -656,6 +661,7 @@ div.vidColumn{
 }
 
 div.vidText{
+	text-align: justify;
 	color: rgb(250,250,250);
 	padding: 20px;
 	background-color: rgba(0,0,0,.5);
@@ -886,6 +892,10 @@ span.important{
 	}
 
 	.outerCenter{
+		width: 100%;
+	}
+
+	.subcontainer{
 		width: 100%;
 	}
 

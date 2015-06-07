@@ -31,34 +31,19 @@
 				<div class="vidColumn">
 					<div class="vidText">
 					<h2>D'on venim?</h2>
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-						tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-						quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-						consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-						cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-						proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+						<p>Aquesta aplicació es el resultat de l'experiència personal i professional que hem tingut els desenvolupadors d'aquest projecte durant la nostre formació. Hem pogut comprovar com en l'àmbit acadèmic els centres educatius rarament es compenetren i treballen plegats, tancant als seus estudiants nous horitzons i  la possibilitat d'entendre que en el món laboral es trobaran envoltats de professionals d'altres disciplines.</p>
 					</div>
 				</div>
 				<div class="vidColumn">
 					<div class="vidText">
 					<h2>Què som?</h2>
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-						tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-						quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-						consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-						cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-						proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+						<p>Som una plataforma que permet acostar els diferents mons educatius, les diferents disciplines i comunitats acadèmiques perquè entre elles, pugin debatre, treballar i créixer en un únic lloc, sense preocupacions d'horaris ni localitat. Acostar als estudiants perquè tinguin la possibilitat d'aprendre junts i en equips multidisciplinaris, amb la supervisió de professors i personal acadèmic que acabi de donar l'ajuda que els estudiants necessiten.</p>
 					</div>
 				</div>
 				<div class="vidColumn">
 					<div class="vidText">
 					<h2>On anem?</h2>
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-						tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-						quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-						consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-						cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-						proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+						<p>El futur es incert, i si bé mai hi ha res segur, si podem dir que si la gent troba útil i necessari aquest projecte, assegurem estar aquí i saber estar a la altura de les expectatives. Seguir millorant i treballant amb professors, alumnes i centres educatius que millorar l'experiència i seguir ajudant a tots aquells que realment estan disposats a aprendre i a desenvolupar-se en les seves especialitats, sense oblidar mai, que en aquest camí, no estan sols.</p>
 					</div>
 				</div>
 			</div>

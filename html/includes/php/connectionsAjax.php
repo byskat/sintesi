@@ -13,7 +13,6 @@
 	
 
 	//A partir del nom del centre dos (obtingut del select al crear un centre) trec la seva ID
-	
 	$result = executePreparedQuery($conn, "SELECT id FROM centers WHERE name = :center2Name", array("center2Name" => $connCenter2Name), false);
 	$idCenter2 = $result->id;
 

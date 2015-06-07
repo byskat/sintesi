@@ -2,8 +2,8 @@
 
     try {
         $opc = array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8");
-        $dsn = "mysql:host=localhost;dbname=creditSintesi";
-        $conn = new PDO($dsn, "root", "123456", $opc);
+        $dsn = "mysql:host=localhost;dbname=creditsintesi";
+        $conn = new PDO($dsn, "root", "1234", $opc);
     }
     catch (PDOException $e) {
         $error = $e->getCode();
@@ -28,7 +28,8 @@
 		if(array_search("(" . $number . ",", $arr_nums) === false){
 			array_push($arr_nums, "(" . $number . ",");
 
-			$sql = "INSERT INTO teachersValidations (orderNum, name, lastName) VALUES(:num, :name, :lastName)";
+			$sql = "INSERT INTO teachersvalidations (orderNum, name, lastName) VALUES(:num, :name, :lastName)";
+			
 			$query = $conn->prepare($sql);
 			$query->execute(array(':num'=>$number,
 								  ':name'=>$name,

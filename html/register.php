@@ -130,7 +130,6 @@
 
                                             executeInsertUpdateQuery($conn, $sql, $arr, false);
                                             $centerValue = strip_tags(trim($_POST['nameCenter']));
-                                            var_dump($centerValue);
                                         }else{
 
                                             $msg = "El centre ja existeix.";
